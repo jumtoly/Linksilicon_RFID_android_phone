@@ -1,0 +1,61 @@
+<resources>
+    <string name="app_name">Linksilicon_RFID_android_phone</string>
+    <string name="title_activity_serial_port_settings">串口设置</string>
+
+
+    <string name="BAUD_RATE">波特率</string>
+    <string-array name="baud_rate_titles">
+        <item>115200</item>
+        <item>57600</item>
+        <item>38400</item>
+        <item>19200</item>
+        <item>9600</item>
+        <item>4800</item>
+        <item>2400</item>
+    </string-array>
+    <string-array name="baud_rate_values">
+        <item>115200</item>
+        <item>57600</item>
+        <item>38400</item>
+        <item>19200</item>
+        <item>9600</item>
+        <item>4800</item>
+        <item>2400</item>
+    </string-array>
+
+    <string name="CHECK_DIGIT">校验位</string>
+    <string-array name="check_digit_titles">
+        <item>偶检验</item>
+        <item>奇检验</item>
+        <item>无检验</item>
+    </string-array>
+    <string-array name="check_digit_values">
+        <item>偶检验</item>
+        <item>奇检验</item>
+        <item>无检验</item>
+    </string-array>
+
+    <string name="DATA_BITS">数据位</string>
+    <string-array name="data_bits_titles">
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+    <string-array name="data_bits_values">
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+    </string-array>
+
+    <string name="STOP_BITS">停止位</string>
+    <string-array name="stop_bits_titles">
+        <item>1</item>
+        <item>1.5</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="stop_bits_values">
+        <item>1</item>
+        <item>1.5</item>
+        <item>2</item>
+    </string-array>
+</resources>

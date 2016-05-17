@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="9600"
+        android:entries="@array/baud_rate_titles"
+        android:entryValues="@array/baud_rate_values"
+        android:key="BAUD_RATE"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/BAUD_RATE" />
+    <ListPreference
+        android:defaultValue="无检验"
+        android:entries="@array/check_digit_titles"
+        android:entryValues="@array/check_digit_values"
+        android:key="CHECK_DIGIT"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/CHECK_DIGIT" />
+
+    <ListPreference
+        android:defaultValue="8"
+        android:entries="@array/data_bits_titles"
+        android:entryValues="@array/data_bits_values"
+        android:key="DATA_BITS"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/DATA_BITS" />
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/stop_bits_titles"
+        android:entryValues="@array/stop_bits_values"
+        android:key="STOP_BITS"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/STOP_BITS" />
+
+
+</PreferenceScreen>

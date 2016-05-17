@@ -9,6 +9,7 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 
-public class SerialPortSettingsActivity extends AppCompatPreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class SerialPortSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private ListPreference baudratesPreference;
     private ListPreference checkDigitsPreference;
@@ -37,15 +38,16 @@ public class SerialPortSettingsActivity extends AppCompatPreferenceActivity impl
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.serial_port_preferences);
         ListView listView = getListView();
-        Button submit = new Button(this);
+        final Button submit = new Button(this);
         submit.setText("打开串口");
+        submit.setTag(1);
         listView.addFooterView(submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (sPort == null) {
                     Toast.makeText(SerialPortSettingsActivity.this, "No serial device.", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (Integer.parseInt(submit.getTag().toString()) == 1) {
                     final UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
                     UsbDeviceConnection connection = usbManager.openDevice(sPort.getDriver().getDevice());
@@ -58,6 +60,8 @@ public class SerialPortSettingsActivity extends AppCompatPreferenceActivity impl
                         sPort.setParameters(baudRate, dataBits, stopBits, parity);
                     } catch (IOException e) {
                         Toast.makeText(SerialPortSettingsActivity.this, "Error opening device", Toast.LENGTH_SHORT).show();
+                        submit.setText("打开串口");
+                        submit.setTag(1);
                         try {
                             sPort.close();
                         } catch (IOException e2) {
@@ -65,6 +69,20 @@ public class SerialPortSettingsActivity extends AppCompatPreferenceActivity impl
                         sPort = null;
                         return;
                     }
+                    Toast.makeText(SerialPortSettingsActivity.this, "Opening device success", Toast.LENGTH_SHORT).show();
+                    submit.setText("关闭串口");
+                    submit.setTag(2);
+                } else if (Integer.parseInt(submit.getTag().toString()) == 2) {
+                    try {
+                        sPort.close();
+                    } catch (IOException e) {
+                        Toast.makeText(SerialPortSettingsActivity.this, "Error close device", Toast.LENGTH_SHORT).show();
+                        submit.setText("关闭串口");
+                        submit.setTag(2);
+                    }
+                    Toast.makeText(SerialPortSettingsActivity.this, "close device success", Toast.LENGTH_SHORT).show();
+                    submit.setText("打开串口");
+                    submit.setTag(1);
                 }
 
             }

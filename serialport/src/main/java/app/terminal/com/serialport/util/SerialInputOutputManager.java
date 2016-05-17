@@ -119,7 +119,7 @@ public class SerialInputOutputManager implements Runnable {
     /**
      * Continuously services the read and write buffers until {@link #stop()} is
      * called, or until a driver exception is raised.
-     * <p/>
+     * <p>
      * NOTE(mikey): Uses inefficient read/write-with-timeout.
      * TODO(mikey): Read asynchronously with {@link UsbRequest#queue(ByteBuffer, int)}
      */
@@ -156,8 +156,7 @@ public class SerialInputOutputManager implements Runnable {
     }
 
     private void step() throws IOException {
-        byte[] bty = {0x55, 0x55, 0x00, 0x00, 0x00, 0x03, 0x01, 0x04, 0x06};
-        writeAsync(bty);
+
         // Handle incoming data.
         int len = mDriver.read(mReadBuffer.array(), READ_WAIT_MILLIS);
         if (len > 0) {
@@ -194,7 +193,6 @@ public class SerialInputOutputManager implements Runnable {
                     final byte[] data = new byte[len];
                     listener.onNewData(outBuff);
                 }
-                mReadBuffer.clear();
             }
         }
 

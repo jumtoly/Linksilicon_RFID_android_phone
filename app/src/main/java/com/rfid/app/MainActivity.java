@@ -13,6 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.rfid.app.utils.SendByteData;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -32,8 +35,8 @@ public class MainActivity extends FragmentActivity {
     private TextView mDumpTextView;
     private ScrollView mScrollView;
     private UsbManager mUsbManager;
-    private LinearLayout resultLayout;
     private UsbSerialPort usbSerialPort;
+    private SerialInputOutputManager serialInputOutputManager;
     private final SerialInputOutputManager.Listener mListener =
             new SerialInputOutputManager.Listener() {
 
@@ -62,11 +65,19 @@ public class MainActivity extends FragmentActivity {
 
     }
 
+
     private void init() {
         mDumpTextView = (TextView) findViewById(R.id.consoleText);
         mScrollView = (ScrollView) findViewById(R.id.consoleScroller);
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getSerialProber();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 
     /**
@@ -75,7 +86,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
-
+        onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
 
     }
 
@@ -85,7 +96,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void baudRateSetting(View v) {
-
+        onDeviceStateChange(SendByteData.BAUD_RATE);
     }
 
     /**
@@ -95,7 +106,6 @@ public class MainActivity extends FragmentActivity {
      */
     public void serialPortSetting(View v) {
         SerialPortSettingsActivity.show(this, usbSerialPort);
-        startActivity(new Intent(this, SerialPortSettingsActivity.class));
     }
 
     /**
@@ -105,7 +115,7 @@ public class MainActivity extends FragmentActivity {
      */
     public void basicOperation(View v) {
         BaseOperateActivity.show(this, usbSerialPort);
-        startActivity(new Intent(this, BaseOperateActivity.class));
+
     }
 
 
@@ -116,7 +126,7 @@ public class MainActivity extends FragmentActivity {
      */
     public void basicOperationCard(View v) {
         BasicOperationCardActivity.show(this, usbSerialPort);
-        startActivity(new Intent(this, BasicOperationCardActivity.class));
+
     }
 
     /**
@@ -146,6 +156,27 @@ public class MainActivity extends FragmentActivity {
 
     }
 
+    private void stopIoManager() {
+        if (serialInputOutputManager != null) {
+            Log.i(TAG, "Stopping io manager ..");
+            serialInputOutputManager.stop();
+            serialInputOutputManager = null;
+        }
+    }
+
+    private void startIoManager(byte[] btys) {
+        if (usbSerialPort != null) {
+            Log.i(TAG, "Starting io manager ..");
+            serialInputOutputManager = new SerialInputOutputManager(usbSerialPort, mListener);
+            serialInputOutputManager.writeAsync(btys);
+            mExecutor.submit(serialInputOutputManager);
+        }
+    }
+
+    private void onDeviceStateChange(byte[] btys) {
+        stopIoManager();
+        startIoManager(btys);
+    }
 
     public void getSerialProber() {
         new AsyncTask<Void, Void, List<UsbSerialPort>>() {

@@ -146,23 +146,18 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/consoleScroller"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="5dp"
         android:background="@drawable/edit_line_box_white"
         android:padding="5dp">
 
-        <LinearLayout
-            android:id="@+id/result_layout"
+        <TextView
+            android:id="@+id/consoleText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="发送命令成功" />
-        </LinearLayout>
+            android:text="发送命令成功" />
     </ScrollView>
 
 

@@ -10,19 +10,49 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import app.terminal.com.serialport.driver.UsbSerialDriver;
 import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.driver.UsbSerialProber;
+import app.terminal.com.serialport.util.HexDump;
+import app.terminal.com.serialport.util.SerialInputOutputManager;
 
 public class MainActivity extends FragmentActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
+
+    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private TextView mDumpTextView;
+    private ScrollView mScrollView;
     private UsbManager mUsbManager;
     private LinearLayout resultLayout;
+    private UsbSerialPort usbSerialPort;
+    private final SerialInputOutputManager.Listener mListener =
+            new SerialInputOutputManager.Listener() {
+
+                @Override
+                public void onRunError(Exception e) {
+                    Log.d(TAG, "Runner stopped.");
+                }
+
+                @Override
+                public void onNewData(final byte[] data) {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            MainActivity.this.updateReceivedData(data);
+                        }
+                    });
+                }
+            };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +63,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void init() {
-        resultLayout = (LinearLayout) findViewById(R.id.result_layout);
+        mDumpTextView = (TextView) findViewById(R.id.consoleText);
+        mScrollView = (ScrollView) findViewById(R.id.consoleScroller);
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         getSerialProber();
     }
@@ -44,6 +75,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
+
 
     }
 
@@ -62,16 +94,29 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void serialPortSetting(View v) {
+        SerialPortSettingsActivity.show(this, usbSerialPort);
         startActivity(new Intent(this, SerialPortSettingsActivity.class));
     }
+
+    /**
+     * 基本操作
+     *
+     * @param v
+     */
+    public void basicOperation(View v) {
+        BaseOperateActivity.show(this, usbSerialPort);
+        startActivity(new Intent(this, BaseOperateActivity.class));
+    }
+
 
     /**
      * 卡片基本操作
      *
      * @param v
      */
-    public void basicOperation(View v) {
-
+    public void basicOperationCard(View v) {
+        BasicOperationCardActivity.show(this, usbSerialPort);
+        startActivity(new Intent(this, BasicOperationCardActivity.class));
     }
 
     /**
@@ -125,10 +170,19 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             protected void onPostExecute(List<UsbSerialPort> result) {
-
+                if (result != null && result.size() > 0) {
+                    usbSerialPort = result.get(0);
+                }
                 Log.d(TAG, "Done refreshing, " + result.size() + " entries found.");
             }
 
         }.execute((Void) null);
+    }
+
+    private void updateReceivedData(byte[] data) {
+        final String message = "Read " + data.length + " bytes: \n"
+                + HexDump.dumpHexString(data) + "\n\n";
+        mDumpTextView.append(message);
+        mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
     }
 }

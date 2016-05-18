@@ -13,6 +13,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.rfid.app.utils.DeviceStateChangeUtils;
+import com.rfid.app.utils.MySharePreference;
 import com.rfid.app.utils.SendByteData;
 
 import java.io.IOException;
@@ -31,30 +33,10 @@ public class MainActivity extends FragmentActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
 
-    private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
     private TextView mDumpTextView;
     private ScrollView mScrollView;
     private UsbManager mUsbManager;
     private UsbSerialPort usbSerialPort;
-    private SerialInputOutputManager serialInputOutputManager;
-    private final SerialInputOutputManager.Listener mListener =
-            new SerialInputOutputManager.Listener() {
-
-                @Override
-                public void onRunError(Exception e) {
-                    Log.d(TAG, "Runner stopped.");
-                }
-
-                @Override
-                public void onNewData(final byte[] data) {
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity.this.updateReceivedData(data);
-                        }
-                    });
-                }
-            };
 
 
     @Override
@@ -86,7 +68,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
-        onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+        DeviceStateChangeUtils.getInstence(usbSerialPort).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
 
     }
 
@@ -96,7 +78,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void baudRateSetting(View v) {
-        onDeviceStateChange(SendByteData.BAUD_RATE);
+        DeviceStateChangeUtils.getInstence(usbSerialPort).onDeviceStateChange(SendByteData.BAUD_RATE);
     }
 
     /**
@@ -156,27 +138,6 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    private void stopIoManager() {
-        if (serialInputOutputManager != null) {
-            Log.i(TAG, "Stopping io manager ..");
-            serialInputOutputManager.stop();
-            serialInputOutputManager = null;
-        }
-    }
-
-    private void startIoManager(byte[] btys) {
-        if (usbSerialPort != null) {
-            Log.i(TAG, "Starting io manager ..");
-            serialInputOutputManager = new SerialInputOutputManager(usbSerialPort, mListener);
-            serialInputOutputManager.writeAsync(btys);
-            mExecutor.submit(serialInputOutputManager);
-        }
-    }
-
-    private void onDeviceStateChange(byte[] btys) {
-        stopIoManager();
-        startIoManager(btys);
-    }
 
     public void getSerialProber() {
         new AsyncTask<Void, Void, List<UsbSerialPort>>() {
@@ -215,5 +176,10 @@ public class MainActivity extends FragmentActivity {
                 + HexDump.dumpHexString(data) + "\n\n";
         mDumpTextView.append(message);
         mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

@@ -32,17 +32,17 @@ public class HexDump {
     public static String dumpHexString(byte[] array, int offset, int length) {
         StringBuilder result = new StringBuilder();
 
-        byte[] line = new byte[16];
+        byte[] line = new byte[32];
         int lineIndex = 0;
 
         result.append("\n0x");
         result.append(toHexString(offset));
 
         for (int i = offset; i < offset + length; i++) {
-            if (lineIndex == 16) {
+            if (lineIndex == 32) {
                 result.append(" ");
 
-                for (int j = 0; j < 16; j++) {
+                for (int j = 0; j < 32; j++) {
                     if (line[j] > ' ' && line[j] < '~') {
                         result.append(new String(line, j, 1));
                     } else {

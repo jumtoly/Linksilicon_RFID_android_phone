@@ -17,6 +17,9 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.rfid.app.utils.MySharePreference;
+import com.rfid.app.utils.StaticVar;
+
 import java.io.IOException;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
@@ -39,15 +42,14 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
         addPreferencesFromResource(R.xml.serial_port_preferences);
         ListView listView = getListView();
         final Button submit = new Button(this);
-        submit.setText("打开串口");
-        submit.setTag(1);
+        submit.setText(StaticVar.getInstence().isSerialIsOpe() ? "关闭串口" : "打开串口");
         listView.addFooterView(submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (sPort == null) {
                     Toast.makeText(SerialPortSettingsActivity.this, "No serial device.", Toast.LENGTH_SHORT).show();
-                } else if (Integer.parseInt(submit.getTag().toString()) == 1) {
+                } else if (!StaticVar.getInstence().isSerialIsOpe()) {
                     final UsbManager usbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
 
                     UsbDeviceConnection connection = usbManager.openDevice(sPort.getDriver().getDevice());
@@ -58,10 +60,10 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
                     try {
                         sPort.open(connection);
                         sPort.setParameters(baudRate, dataBits, stopBits, parity);
+                        StaticVar.getInstence().setSerialIsOpe(true);
                     } catch (IOException e) {
                         Toast.makeText(SerialPortSettingsActivity.this, "Error opening device", Toast.LENGTH_SHORT).show();
                         submit.setText("打开串口");
-                        submit.setTag(1);
                         try {
                             sPort.close();
                         } catch (IOException e2) {
@@ -71,18 +73,17 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
                     }
                     Toast.makeText(SerialPortSettingsActivity.this, "Opening device success", Toast.LENGTH_SHORT).show();
                     submit.setText("关闭串口");
-                    submit.setTag(2);
-                } else if (Integer.parseInt(submit.getTag().toString()) == 2) {
+                } else {
                     try {
                         sPort.close();
+                        StaticVar.getInstence().setSerialIsOpe(false);
                     } catch (IOException e) {
                         Toast.makeText(SerialPortSettingsActivity.this, "Error close device", Toast.LENGTH_SHORT).show();
                         submit.setText("关闭串口");
-                        submit.setTag(2);
                     }
                     Toast.makeText(SerialPortSettingsActivity.this, "close device success", Toast.LENGTH_SHORT).show();
                     submit.setText("打开串口");
-                    submit.setTag(1);
+                    StaticVar.getInstence().setSerialIsOpe(false);
                 }
 
             }

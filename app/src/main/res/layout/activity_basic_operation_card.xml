@@ -28,6 +28,7 @@
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/card_info"
                 android:layout_width="180dp"
                 android:layout_height="30dp"
                 android:background="@drawable/textview_line_box"
@@ -38,6 +39,7 @@
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="getCardInfo"
             android:text="获取卡片信息"
             android:textSize="12sp" />
 
@@ -45,12 +47,14 @@
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="standardFindCard"
             android:text="标准询卡"
             android:textSize="12sp" />
 
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="wakeUpFindCard"
             android:text="唤醒询卡"
             android:textSize="12sp" />
 
@@ -58,12 +62,14 @@
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="antiCollision"
             android:text="防冲突"
             android:textSize="12sp" />
 
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="complexFindCard"
             android:text="复合寻卡"
             android:textSize="12sp" />
 
@@ -71,12 +77,14 @@
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="selectCard"
             android:text="选卡"
             android:textSize="12sp" />
 
         <Button
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:onClick="stopCard"
             android:text="暂停卡"
             android:textSize="12sp" />
 

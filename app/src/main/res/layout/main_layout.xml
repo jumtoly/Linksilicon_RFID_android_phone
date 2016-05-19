@@ -56,15 +56,31 @@
             android:text="读卡器波特率："
             android:textSize="14sp" />
 
-
-        <TextView
-            android:id="@+id/baud_rate_setting_parameters"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:background="@drawable/textview_line_box"
-            android:textSize="12sp" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+
+            <TextView
+                android:id="@+id/baud_rate_setting_parameters"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="2"
+                android:background="#E1E1E1"
+                android:paddingLeft="2dp"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="10dp"
+                android:src="@drawable/arrow_down" />
+        </LinearLayout>
+
 
         <Button
             android:layout_width="wrap_content"

@@ -47,7 +47,22 @@
             android:name=".BasicOperationCardActivity"
             android:label="@string/title_activity_base_operate_card"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Dialog"></activity>
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity
+            android:name=".S50CardOperateActivity"
+            android:label="@string/title_activity_s50_operate"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity
+            android:name=".S70CardOperateActivity"
+            android:label="@string/title_activity_s70_operate"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Dialog" />
+        <activity
+            android:name=".CpuCardOperateActivity"
+            android:label="@string/title_activity_cpu_operate"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

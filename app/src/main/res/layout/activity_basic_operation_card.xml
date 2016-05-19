@@ -1,70 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="3dp"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:scrollbars="none"
+    tools:context="com.rfid.app.BasicOperationCardActivity">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="vertical">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="3dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:padding="5dp">
 
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="卡片信息："
-            android:textSize="16sp" />
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
 
-        <TextView
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="卡片信息："
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="30dp"
+                android:background="@drawable/textview_line_box"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+        <Button
             android:layout_width="180dp"
-            android:layout_height="30dp"
-            android:background="@drawable/textview_line_box"
-            android:textSize="14sp" />
+            android:layout_height="wrap_content"
+            android:text="获取卡片信息"
+            android:textSize="12sp" />
+
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="标准询卡"
+            android:textSize="12sp" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="唤醒询卡"
+            android:textSize="12sp" />
+
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="防冲突"
+            android:textSize="12sp" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="复合寻卡"
+            android:textSize="12sp" />
+
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="选卡"
+            android:textSize="12sp" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="暂停卡"
+            android:textSize="12sp" />
 
     </LinearLayout>
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="获取卡片信息" />
-
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="标准询卡" />
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="唤醒询卡" />
-
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="防冲突" />
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="复合寻卡" />
-
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="选卡" />
-
-    <Button
-        android:layout_width="180dp"
-        android:layout_height="wrap_content"
-        android:text="暂停卡" />
-
-</LinearLayout>
+</ScrollView>

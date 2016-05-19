@@ -117,6 +117,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void S50(View v) {
+        S50CardOperateActivity.show(this, usbSerialPort);
 
     }
 
@@ -126,7 +127,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void S70(View v) {
-
+        S70CardOperateActivity.show(this, usbSerialPort);
     }
 
     /**
@@ -135,7 +136,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void cpu(View v) {
-
+        CpuCardOperateActivity.show(this, usbSerialPort);
     }
 
 

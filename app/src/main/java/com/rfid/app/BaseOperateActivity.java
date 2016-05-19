@@ -11,7 +11,7 @@ import com.rfid.app.utils.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 
-public class BaseOperateActivity extends MainActivity {
+public class BaseOperateActivity extends AppCompatActivity {
 
     private static UsbSerialPort sPort;
 

@@ -10,34 +10,39 @@
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:onClick="startAutoFindCard"
         android:text="开启自动寻卡" />
 
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:onClick="closeAutoFindCard"
         android:text="关闭自动寻卡" />
 
 
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-
+        android:onClick="startBuzzer"
         android:text="开启蜂鸣器" />
 
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:onClick="stopBuzzer"
         android:text="关闭蜂鸣器" />
 
 
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:onClick="closeAllAntenna"
         android:text="关闭所有天线" />
 
     <Button
         android:layout_width="180dp"
         android:layout_height="wrap_content"
+        android:onClick="manuallyDetectingCard"
         android:text="手动寻卡" />
 
 

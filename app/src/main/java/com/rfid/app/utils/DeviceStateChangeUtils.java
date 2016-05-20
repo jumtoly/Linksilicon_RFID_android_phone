@@ -35,16 +35,20 @@ public class DeviceStateChangeUtils {
             new SerialInputOutputManager.Listener() {
 
                 @Override
+                public void onReqonseData(byte[] data) {
+                    Log.i("DeviceStateChangeUtils", data + "");
+                }
+
+                @Override
+                public void onRequestData(byte[] data) {
+                    Log.i("DeviceStateChangeUtils", data + "");
+                }
+
+                @Override
                 public void onRunError(Exception e) {
 //                    Log.d(TAG, "Runner stopped.");
                 }
 
-                @Override
-                public void onNewData(final byte[] data) {
-                    for (byte byt :
-                            data) {
-                        Log.i("DeviceStateChangeUtils", byt + "");
-                    }
 
                    /* MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -52,7 +56,6 @@ public class DeviceStateChangeUtils {
                             MainActivity.this.updateReceivedData(data);
                         }
                     });*/
-                }
             };
 
     public void onDeviceStateChange(byte[] btys) {

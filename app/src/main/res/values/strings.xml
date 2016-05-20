@@ -3,6 +3,9 @@
     <string name="title_activity_serial_port_settings">串口设置</string>
     <string name="title_activity_base_operate">基础操作</string>
     <string name="title_activity_base_operate_card">卡片基本操作</string>
+    <string name="title_activity_s50_operate">S50</string>
+    <string name="title_activity_s70_operate">S70</string>
+    <string name="title_activity_cpu_operate">cpu</string>
 
 
     <string name="BAUD_RATE">波特率</string>

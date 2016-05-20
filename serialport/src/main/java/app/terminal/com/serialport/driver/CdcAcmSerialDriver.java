@@ -161,7 +161,7 @@ public class CdcAcmSerialDriver implements UsbSerialDriver {
         }
 
         @Override
-        public int read(byte[] dest, int timeoutMillis) throws IOException {
+        public int read(byte[] dest, int timeoutMillis, final boolean isOpenAsyncRead) throws IOException {
            /* if (mEnableAsyncReads) {
                 final UsbRequest request = new UsbRequest();
                 try {

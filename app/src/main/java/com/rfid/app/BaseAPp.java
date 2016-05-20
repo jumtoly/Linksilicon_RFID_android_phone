@@ -1,7 +1,6 @@
 package com.rfid.app;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 /**
  * Created by sly on 2016/5/18.
@@ -9,7 +8,6 @@ import android.content.SharedPreferences;
 public class BaseApp extends Application {
     private static BaseApp instance;
 
-    private static int mNum = 0;
 
     @Override
     public void onCreate() {
@@ -21,4 +19,5 @@ public class BaseApp extends Application {
 
         return instance;
     }
+
 }

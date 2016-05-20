@@ -45,14 +45,10 @@ abstract class CommonUsbSerialPort implements UsbSerialPort {
     protected final Object mReadBufferLock = new Object();
     protected final Object mWriteBufferLock = new Object();
 
-    /**
-     * Internal read buffer.  Guarded by {@link #mReadBufferLock}.
-     */
+    /** Internal read buffer.  Guarded by {@link #mReadBufferLock}. */
     protected byte[] mReadBuffer;
 
-    /**
-     * Internal write buffer.  Guarded by {@link #mWriteBufferLock}.
-     */
+    /** Internal write buffer.  Guarded by {@link #mWriteBufferLock}. */
     protected byte[] mWriteBuffer;
 
     public CommonUsbSerialPort(UsbDevice device, int portNumber) {
@@ -62,7 +58,7 @@ abstract class CommonUsbSerialPort implements UsbSerialPort {
         mReadBuffer = new byte[DEFAULT_READ_BUFFER_SIZE];
         mWriteBuffer = new byte[DEFAULT_WRITE_BUFFER_SIZE];
     }
-
+    
     @Override
     public String toString() {
         return String.format("<%s device_name=%s device_id=%s port_number=%s>",
@@ -83,11 +79,10 @@ abstract class CommonUsbSerialPort implements UsbSerialPort {
     public int getPortNumber() {
         return mPortNumber;
     }
-
+    
     /**
      * Returns the device serial number
-     *
-     * @return serial number
+     *  @return serial number
      */
     @Override
     public String getSerial() {
@@ -131,7 +126,7 @@ abstract class CommonUsbSerialPort implements UsbSerialPort {
     public abstract void close() throws IOException;
 
     @Override
-    public abstract int read(final byte[] dest, final int timeoutMillis, final boolean isOpenAsyncRead) throws IOException;
+    public abstract int read(final byte[] dest, final int timeoutMillis) throws IOException;
 
     @Override
     public abstract int write(final byte[] src, final int timeoutMillis) throws IOException;

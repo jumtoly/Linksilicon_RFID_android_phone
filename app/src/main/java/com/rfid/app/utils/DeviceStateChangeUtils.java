@@ -1,12 +1,12 @@
 package com.rfid.app.utils;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.SerialInputOutputManager;
 
 /**
@@ -17,6 +17,7 @@ public class DeviceStateChangeUtils {
     private SerialInputOutputManager serialInputOutputManager;
     private static DeviceStateChangeUtils deviceStateChangeUtils;
     private static UsbSerialPort serialPort;
+    private int count = 0;
 
     private DeviceStateChangeUtils() {
 
@@ -34,14 +35,11 @@ public class DeviceStateChangeUtils {
     private final SerialInputOutputManager.Listener mListener =
             new SerialInputOutputManager.Listener() {
 
-                @Override
-                public void onReqonseData(byte[] data) {
-                    Log.i("DeviceStateChangeUtils", data + "");
-                }
 
                 @Override
-                public void onRequestData(byte[] data) {
-                    Log.i("DeviceStateChangeUtils", data + "");
+                public void onNewData(byte[] data) {
+                    Log.i("DeviceStateChangeUtils", HexDump.toHexString(data));
+
                 }
 
                 @Override
@@ -50,12 +48,6 @@ public class DeviceStateChangeUtils {
                 }
 
 
-                   /* MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            MainActivity.this.updateReceivedData(data);
-                        }
-                    });*/
             };
 
     public void onDeviceStateChange(byte[] btys) {

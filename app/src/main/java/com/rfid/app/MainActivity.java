@@ -52,15 +52,17 @@ public class MainActivity extends FragmentActivity {
         mDumpTextView = (TextView) findViewById(R.id.consoleText);
         mScrollView = (ScrollView) findViewById(R.id.consoleScroller);
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-        getSerialProber();
+//        getSerialProber();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+//        getSerialProber();
 
     }
+
 
     /**
      * 获取序列号
@@ -68,7 +70,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
-        DeviceStateChangeUtils.getInstence(usbSerialPort).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
 
     }
 
@@ -78,7 +80,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void baudRateSetting(View v) {
-        DeviceStateChangeUtils.getInstence(usbSerialPort).onDeviceStateChange(SendByteData.BAUD_RATE);
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.BAUD_RATE);
     }
 
     /**
@@ -87,7 +89,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void serialPortSetting(View v) {
-        SerialPortSettingsActivity.show(this, usbSerialPort);
+        SerialPortSettingsActivity.show(this);
     }
 
     /**
@@ -96,7 +98,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void basicOperation(View v) {
-        BaseOperateActivity.show(this, usbSerialPort);
+        BaseOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
 
     }
 
@@ -107,7 +109,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void basicOperationCard(View v) {
-        BasicOperationCardActivity.show(this, usbSerialPort);
+        BasicOperationCardActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
 
     }
 
@@ -117,7 +119,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void S50(View v) {
-        S50CardOperateActivity.show(this, usbSerialPort);
+        S50CardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
 
     }
 
@@ -127,7 +129,7 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void S70(View v) {
-        S70CardOperateActivity.show(this, usbSerialPort);
+        S70CardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
     }
 
     /**
@@ -136,41 +138,9 @@ public class MainActivity extends FragmentActivity {
      * @param v
      */
     public void cpu(View v) {
-        CpuCardOperateActivity.show(this, usbSerialPort);
+        CpuCardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
     }
 
-
-    public void getSerialProber() {
-        new AsyncTask<Void, Void, List<UsbSerialPort>>() {
-            @Override
-            protected List<UsbSerialPort> doInBackground(Void... params) {
-                Log.d(TAG, "Refreshing device list ...");
-                SystemClock.sleep(1000);
-
-                final List<UsbSerialDriver> drivers =
-                        UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
-                Log.d(TAG, "drivers:" + drivers.size());
-                final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
-                for (final UsbSerialDriver driver : drivers) {
-                    final List<UsbSerialPort> ports = driver.getPorts();
-                    Log.d(TAG, String.format("+ %s: %s port%s",
-                            driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
-                    result.addAll(ports);
-                }
-
-                return result;
-            }
-
-            @Override
-            protected void onPostExecute(List<UsbSerialPort> result) {
-                if (result != null && result.size() > 0) {
-                    usbSerialPort = result.get(0);
-                }
-                Log.d(TAG, "Done refreshing, " + result.size() + " entries found.");
-            }
-
-        }.execute((Void) null);
-    }
 
     private void updateReceivedData(byte[] data) {
         final String message = "Read " + data.length + " bytes: \n"

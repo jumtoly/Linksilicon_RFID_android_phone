@@ -161,7 +161,7 @@ public class CdcAcmSerialDriver implements UsbSerialDriver {
         }
 
         @Override
-        public int read(byte[] dest, int timeoutMillis, final boolean isOpenAsyncRead) throws IOException {
+        public int read(byte[] dest, int timeoutMillis) throws IOException {
            /* if (mEnableAsyncReads) {
                 final UsbRequest request = new UsbRequest();
                 try {
@@ -238,7 +238,7 @@ public class CdcAcmSerialDriver implements UsbSerialDriver {
                             + " bytes at offset " + offset + " length=" + src.length);
                 }
 
-                Log.d(TAG, "Write amt=" + amtWritten + " attempted=" + writeLength);
+                Log.d(TAG, "Wrote amt=" + amtWritten + " attempted=" + writeLength);
                 offset += amtWritten;
             }
             return offset;

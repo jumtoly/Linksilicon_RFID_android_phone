@@ -63,6 +63,7 @@
             android:label="@string/title_activity_cpu_operate"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Dialog" />
+
     </application>
 
 </manifest>

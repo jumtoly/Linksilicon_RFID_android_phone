@@ -99,8 +99,11 @@ public class HexDump {
             buf[bufIndex++] = HEX_DIGITS[(b >>> 4) & 0x0F];
             buf[bufIndex++] = HEX_DIGITS[b & 0x0F];
         }
-
-        return new String(buf);
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < buf.length; i += 2) {
+            sb.append(buf[i]).append(buf[i + 1]).append(" ");
+        }
+        return sb.toString();
     }
 
     public static String toHexString(int i) {

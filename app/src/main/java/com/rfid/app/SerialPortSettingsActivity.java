@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -21,11 +23,15 @@ import com.rfid.app.utils.MySharePreference;
 import com.rfid.app.utils.StaticVar;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import app.terminal.com.serialport.driver.UsbSerialDriver;
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.driver.UsbSerialProber;
 
 public class SerialPortSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
-
+    private final String TAG = SerialPortSettingsActivity.class.getSimpleName();
     private ListPreference baudratesPreference;
     private ListPreference checkDigitsPreference;
     private ListPreference dataBitsPreference;
@@ -35,6 +41,7 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
     private int dataBits = 8;
     private int stopBits = UsbSerialPort.STOPBITS_1;
     private int parity = UsbSerialPort.PARITY_NONE;
+    private UsbManager mUsbManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,7 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
         addPreferencesFromResource(R.xml.serial_port_preferences);
         ListView listView = getListView();
         final Button submit = new Button(this);
+        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
         submit.setText(StaticVar.getInstence().isSerialIsOpe() ? "关闭串口" : "打开串口");
         listView.addFooterView(submit);
         submit.setOnClickListener(new View.OnClickListener() {
@@ -155,12 +163,44 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
     @Override
     protected void onResume() {
         super.onResume();
-
+        getSerialProber();
 
     }
 
-    static void show(Context context, UsbSerialPort port) {
-        sPort = port;
+    public void getSerialProber() {
+        new AsyncTask<Void, Void, List<UsbSerialPort>>() {
+            @Override
+            protected List<UsbSerialPort> doInBackground(Void... params) {
+                Log.d(TAG, "Refreshing device list ...");
+                SystemClock.sleep(1000);
+
+                final List<UsbSerialDriver> drivers =
+                        UsbSerialProber.getDefaultProber().findAllDrivers(mUsbManager);
+                Log.d(TAG, "drivers:" + drivers.size());
+                final List<UsbSerialPort> result = new ArrayList<UsbSerialPort>();
+                for (final UsbSerialDriver driver : drivers) {
+                    final List<UsbSerialPort> ports = driver.getPorts();
+                    Log.d(TAG, String.format("+ %s: %s port%s",
+                            driver, Integer.valueOf(ports.size()), ports.size() == 1 ? "" : "s"));
+                    result.addAll(ports);
+                }
+
+                return result;
+            }
+
+            @Override
+            protected void onPostExecute(List<UsbSerialPort> result) {
+                if (result != null && result.size() > 0) {
+                    SerialPortEntity.getInstance().setSerialPort(result.get(0));
+                    sPort = result.get(0);
+                }
+                Log.d(TAG, "Done refreshing, " + result.size() + " entries found.");
+            }
+
+        }.execute((Void) null);
+    }
+
+    static void show(Context context) {
         final Intent intent = new Intent(context, SerialPortSettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

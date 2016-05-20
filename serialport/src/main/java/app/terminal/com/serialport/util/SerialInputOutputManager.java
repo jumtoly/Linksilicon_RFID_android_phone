@@ -30,6 +30,12 @@ import java.nio.ByteBuffer;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 
+/**
+ * Utility class which services a {@link UsbSerialPort} in its {@link #run()}
+ * method.
+ *
+ * @author mike wakerly (opensource@hoho.com)
+ */
 public class SerialInputOutputManager implements Runnable {
 
     private static final String TAG = SerialInputOutputManager.class.getSimpleName();
@@ -61,14 +67,7 @@ public class SerialInputOutputManager implements Runnable {
         /**
          * Called when new incoming data is available.
          */
-        public void onReqonseData(byte[] data);
-
-        /**
-         * request data
-         *
-         * @param data
-         */
-        public void onRequestData(byte[] data);
+        public void onNewData(byte[] data);
 
         /**
          * Called when {@link SerialInputOutputManager#run()} aborts due to an
@@ -157,16 +156,15 @@ public class SerialInputOutputManager implements Runnable {
     }
 
     private void step() throws IOException {
-
         // Handle incoming data.
-        int len = mDriver.read(mReadBuffer.array(), READ_WAIT_MILLIS, false);
+        int len = mDriver.read(mReadBuffer.array(), READ_WAIT_MILLIS);
         if (len > 0) {
             if (DEBUG) Log.d(TAG, "Read data len=" + len);
             final Listener listener = getListener();
             if (listener != null) {
                 final byte[] data = new byte[len];
                 mReadBuffer.get(data, 0, len);
-                listener.onReqonseData(data);
+                listener.onNewData(data);
             }
             mReadBuffer.clear();
         }
@@ -192,8 +190,9 @@ public class SerialInputOutputManager implements Runnable {
                 final Listener listener = getListener();
                 if (listener != null) {
                     final byte[] data = new byte[len];
-                    listener.onRequestData(outBuff);
+                    listener.onNewData(outBuff);
                 }
+                mReadBuffer.clear();
             }
         }
 

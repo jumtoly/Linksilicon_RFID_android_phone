@@ -52,14 +52,12 @@ public class MainActivity extends FragmentActivity {
         mDumpTextView = (TextView) findViewById(R.id.consoleText);
         mScrollView = (ScrollView) findViewById(R.id.consoleScroller);
         mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
-//        getSerialProber();
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        getSerialProber();
 
     }
 

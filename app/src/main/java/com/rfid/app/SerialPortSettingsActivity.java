@@ -192,6 +192,8 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
             protected void onPostExecute(List<UsbSerialPort> result) {
                 if (result != null && result.size() > 0) {
                     SerialPortEntity.getInstance().setSerialPort(result.get(0));
+                    BaseApp baseApp = (BaseApp) getApplication();
+                    baseApp.setUsbSerialPort(result.get(0));
                     sPort = result.get(0);
                 }
                 Log.d(TAG, "Done refreshing, " + result.size() + " entries found.");

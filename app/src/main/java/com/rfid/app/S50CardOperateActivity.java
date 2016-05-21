@@ -7,9 +7,17 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import app.terminal.com.serialport.util.DeviceStateChangeUtils;
 import app.terminal.com.serialport.util.SendByteData;
@@ -19,14 +27,6 @@ import app.terminal.com.serialport.driver.UsbSerialPort;
 public class S50CardOperateActivity extends AppCompatActivity {
 
     private static UsbSerialPort sPort;
-    private LinearLayout findAddrWayLayout;
-    private TextView findAddrWayTv;
-    private LinearLayout sectorAddressLayout;
-    private TextView sectorAddressTv;
-    private LinearLayout blockAddressLayout;
-    private TextView blockAddressTv;
-    private LinearLayout selectSectorLayout;
-    private TextView selectSectorTv;
     private EditText privateKeyEt;
     private EditText blockDataEt;
     private EditText moneyNumEt;
@@ -34,6 +34,27 @@ public class S50CardOperateActivity extends AppCompatActivity {
     private EditText bOldKeyEt;
     private EditText aNewKeyEt;
     private EditText bNewKeyEt;
+    private RadioGroup radioGroup;
+    private RadioButton aRadioBtn;
+    private RadioButton bRadioBtn;
+
+    private Spinner findAddrWaySpinner;
+    private Spinner sectorAddressSpinner;
+    private Spinner blockAddressSpinner;
+    private Spinner selectSectorSpinner;
+
+    private List<String> findAddrWaySpinnerList;
+    private ArrayAdapter<String> findAddrWaySpinnerAdapter;
+
+    private List<Integer> sectorAddressSpinnerList;
+    private ArrayAdapter<Integer> sectorAddressSpinnerAdapter;
+
+    private List<Integer> blockAddressSpinnerList;
+    private ArrayAdapter<Integer> blockAddressSpinnerAdapter;
+
+    private List<Integer> selectSectorSpinnerList;
+    private ArrayAdapter<Integer> selectSectorSpinnerAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +67,44 @@ public class S50CardOperateActivity extends AppCompatActivity {
         p.width = (int) (d.getWidth() * 0.8); // 宽度设置为屏幕的0.7
         getWindow().setAttributes(p);
         findViews();
+        initData();
+    }
+
+    private void initData() {
+        findAddrWaySpinnerList = new ArrayList<>();
+        sectorAddressSpinnerList = new ArrayList<>();
+        blockAddressSpinnerList = new ArrayList<>();
+        selectSectorSpinnerList = new ArrayList<>();
+
+        findAddrWaySpinnerList.add("绝对寻址");
+        findAddrWaySpinnerList.add("相对寻址");
+        for (int i = 0; i < 16; i++) {
+            sectorAddressSpinnerList.add(i);
+            selectSectorSpinnerList.add(i);
+        }
+        for (int i = 0; i < 4; i++) {
+            blockAddressSpinnerList.add(i);
+        }
+
+        //适配器
+        findAddrWaySpinnerAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, findAddrWaySpinnerList);
+        sectorAddressSpinnerAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, sectorAddressSpinnerList);
+        blockAddressSpinnerAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, blockAddressSpinnerList);
+        selectSectorSpinnerAdapter = new ArrayAdapter<Integer>(this, android.R.layout.simple_spinner_item, selectSectorSpinnerList);
+        //设置样式
+        findAddrWaySpinnerAdapter.setDropDownViewResource(R.layout.drop_down_item);
+        sectorAddressSpinnerAdapter.setDropDownViewResource(R.layout.drop_down_item);
+        blockAddressSpinnerAdapter.setDropDownViewResource(R.layout.drop_down_item);
+        selectSectorSpinnerAdapter.setDropDownViewResource(R.layout.drop_down_item);
+        //加载适配器
+        findAddrWaySpinner.setAdapter(findAddrWaySpinnerAdapter);
+        sectorAddressSpinner.setAdapter(sectorAddressSpinnerAdapter);
+        blockAddressSpinner.setAdapter(blockAddressSpinnerAdapter);
+        selectSectorSpinner.setAdapter(selectSectorSpinnerAdapter);
+
     }
 
     private void findViews() {
-        findAddrWayLayout = (LinearLayout) findViewById(R.id.s50_find_addr_way_layout);
-        findAddrWayTv = (TextView) findViewById(R.id.s50_find_addr_way);
-        sectorAddressLayout = (LinearLayout) findViewById(R.id.s50_sector_address_layout);
-        sectorAddressTv = (TextView) findViewById(R.id.s50_sector_address);
-        blockAddressLayout = (LinearLayout) findViewById(R.id.s50_block_address_layout);
-        blockAddressTv = (TextView) findViewById(R.id.s50_block_address);
-        selectSectorLayout = (LinearLayout) findViewById(R.id.s50_select_sector_layout);
-        selectSectorTv = (TextView) findViewById(R.id.s50_select_sector);
         privateKeyEt = (EditText) findViewById(R.id.s50_private_key);
         blockDataEt = (EditText) findViewById(R.id.s50_block_data);
         moneyNumEt = (EditText) findViewById(R.id.s50_money_num);
@@ -64,6 +112,66 @@ public class S50CardOperateActivity extends AppCompatActivity {
         bOldKeyEt = (EditText) findViewById(R.id.s50_b_old_key);
         aNewKeyEt = (EditText) findViewById(R.id.s50_a_new_key);
         bNewKeyEt = (EditText) findViewById(R.id.s50_b_new_key);
+        radioGroup = (RadioGroup) findViewById(R.id.s50_key_type_radiogroup);
+        aRadioBtn = (RadioButton) findViewById(R.id.s50_key_type_radiobtn_A);
+        bRadioBtn = (RadioButton) findViewById(R.id.s50_key_type_radiobtn_B);
+        findAddrWaySpinner = (Spinner) findViewById(R.id.s50_find_addr_way_spinner);
+        sectorAddressSpinner = (Spinner) findViewById(R.id.s50_sector_address_spinner);
+        blockAddressSpinner = (Spinner) findViewById(R.id.s50_block_address_spinner);
+        selectSectorSpinner = (Spinner) findViewById(R.id.s50_select_sector_spinner);
+
+        aRadioBtn.setChecked(true);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+            }
+        });
+        findAddrWaySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        sectorAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        blockAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        selectSectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
     }
 

@@ -1,4 +1,6 @@
-package com.rfid.app;
+package app.terminal.com.serialport.util;
+
+import android.hardware.usb.UsbDeviceConnection;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 
@@ -8,6 +10,7 @@ import app.terminal.com.serialport.driver.UsbSerialPort;
 public class SerialPortEntity {
     private static SerialPortEntity serialPortEntity;
     private UsbSerialPort serialPort;
+    private UsbDeviceConnection connection;
 
     private SerialPortEntity() {
 
@@ -26,5 +29,21 @@ public class SerialPortEntity {
 
     public void setSerialPort(UsbSerialPort serialPort) {
         this.serialPort = serialPort;
+    }
+
+    public static SerialPortEntity getSerialPortEntity() {
+        return serialPortEntity;
+    }
+
+    public static void setSerialPortEntity(SerialPortEntity serialPortEntity) {
+        SerialPortEntity.serialPortEntity = serialPortEntity;
+    }
+
+    public UsbDeviceConnection getConnection() {
+        return connection;
+    }
+
+    public void setConnection(UsbDeviceConnection connection) {
+        this.connection = connection;
     }
 }

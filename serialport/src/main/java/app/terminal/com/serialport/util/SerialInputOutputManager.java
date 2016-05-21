@@ -21,6 +21,7 @@
 
 package app.terminal.com.serialport.util;
 
+import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbRequest;
 import android.util.Log;
 
@@ -102,6 +103,7 @@ public class SerialInputOutputManager implements Runnable {
     public void writeAsync(byte[] data) {
         synchronized (mWriteBuffer) {
             mWriteBuffer.put(data);
+
         }
     }
 

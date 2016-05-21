@@ -13,6 +13,7 @@ import app.terminal.com.serialport.util.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.HexDump;
+import app.terminal.com.serialport.util.SerialPortEntity;
 
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+//        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
 
     }
 
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void baudRateSetting(View v) {
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.BAUD_RATE);
+//        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.BAUD_RATE);
     }
 
     /**

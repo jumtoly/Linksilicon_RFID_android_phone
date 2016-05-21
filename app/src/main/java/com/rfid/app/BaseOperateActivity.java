@@ -5,20 +5,34 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
 
+import app.terminal.com.serialport.inter.ControlLinksilliconCardIntface;
 import app.terminal.com.serialport.util.DeviceStateChangeUtils;
 import app.terminal.com.serialport.util.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.util.SerialportControl;
 
 public class BaseOperateActivity extends AppCompatActivity {
 
     private static UsbSerialPort sPort;
+    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_operate);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+            this.finish();
+        }
     }
 
     /**
@@ -27,8 +41,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void manuallyDetectingCard(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.MANUALLY_DETECTING_CARD);
-
+        controlLinksilliconCardIntface.manualCard();
     }
 
     /**
@@ -37,8 +50,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAllAntenna(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.STOP_ALL_ANTENNA);
-
+        controlLinksilliconCardIntface.antennaOff();
     }
 
     /**
@@ -47,7 +59,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void stopBuzzer(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.STOP_BUZZER);
+        controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -56,7 +68,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startBuzzer(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.START_BUZZER);
+        controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -65,7 +77,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAutoFindCard(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.STOP_AUTO_FIND_CARD);
+        controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -74,8 +86,9 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startAutoFindCard(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.START_BUZZER);
+        controlLinksilliconCardIntface.autoFindCard(true);
     }
+
 
     static void show(Context context, UsbSerialPort port) {
         sPort = port;

@@ -73,7 +73,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50KeyAuthentiation(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.KEY_AUTHENTICATION_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.KEY_AUTHENTICATION_M1);
     }
 
     /**
@@ -82,7 +82,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50CompositeBlockRead(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_READING_BLOCK_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_READING_BLOCK_M1);
     }
 
     /**
@@ -91,7 +91,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50CompositeBlockWrite(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_WRITE_BLOCK_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_WRITE_BLOCK_M1);
     }
 
     /**
@@ -100,7 +100,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ReadBlock(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.READ_BLOCK_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.READ_BLOCK_M1);
     }
 
 
@@ -110,7 +110,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50WriteBlock(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WRITE_BLOCK_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WRITE_BLOCK_M1);
     }
 
     /**
@@ -119,7 +119,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50InitWallet(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_INITIALIZATION_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_INITIALIZATION_M1);
     }
 
     /**
@@ -128,7 +128,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ReadWallet(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_READ_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_READ_M1);
     }
 
     /**
@@ -137,7 +137,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50AddedWallet(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_RECHARGE_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_RECHARGE_M1);
     }
 
     /**
@@ -146,7 +146,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ImpairmentWallet(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_DECREMENT_M1);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_DECREMENT_M1);
     }
 
     /**
@@ -164,7 +164,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ModifyPrivateKey(View v) {
-        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_DETECTING_CARD_14443A);
+//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_DETECTING_CARD_14443A);
     }
 
     static void show(Context context, UsbSerialPort port) {

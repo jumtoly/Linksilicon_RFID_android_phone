@@ -19,8 +19,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.rfid.app.utils.MySharePreference;
-import com.rfid.app.utils.StaticVar;
+import app.terminal.com.serialport.util.StaticVar;
 
 import java.io.IOException;
 import java.util.ArrayList;

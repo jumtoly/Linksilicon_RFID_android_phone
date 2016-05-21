@@ -1,4 +1,4 @@
-package com.rfid.app.utils;
+package app.terminal.com.serialport.util;
 
 import android.util.Log;
 
@@ -6,8 +6,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
-import app.terminal.com.serialport.util.HexDump;
-import app.terminal.com.serialport.util.SerialInputOutputManager;
 
 /**
  * Created by sly on 2016/5/18.

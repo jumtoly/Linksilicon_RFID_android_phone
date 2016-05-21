@@ -35,6 +35,7 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
+                    android:id="@+id/s50_find_addr_way_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_line_box"
@@ -43,6 +44,7 @@
 
 
                     <TextView
+                        android:id="@+id/s50_find_addr_way"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -78,6 +80,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/s50_sector_address_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/textview_line_box"
@@ -86,6 +89,7 @@
 
 
                         <TextView
+                            android:id="@+id/s50_sector_address"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
@@ -117,6 +121,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/s50_block_address_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/textview_line_box"
@@ -125,6 +130,7 @@
 
 
                         <TextView
+                            android:id="@+id/s50_block_address"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_gravity="center"
@@ -155,6 +161,7 @@
                     android:textSize="12sp" />
 
                 <RadioGroup
+                    android:id="@+id/s50_key_type_radiogroup"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
                     android:gravity="center_vertical"
@@ -187,6 +194,7 @@
 
 
                 <EditText
+                    android:id="@+id/s50_private_key"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -211,6 +219,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50KeyAuthentiation"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="密钥验证"
@@ -223,6 +232,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50CompositeBlockRead"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="复合读块"
@@ -235,6 +245,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50CompositeBlockWrite"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="复合写块"
@@ -256,6 +267,7 @@
 
 
                 <EditText
+                    android:id="@+id/s50_block_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -277,6 +289,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50ReadBlock"
                     android:text="读块"
                     android:textSize="12sp" />
 
@@ -285,6 +298,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50WriteBlock"
                     android:text="写块"
                     android:textSize="12sp" />
 
@@ -312,6 +326,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s50_money_num"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -332,6 +347,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50InitWallet"
                     android:text="钱包初始化"
                     android:textSize="12sp" />
 
@@ -340,6 +356,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50ReadWallet"
                     android:text="读钱包"
                     android:textSize="12sp" />
 
@@ -357,6 +374,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50AddedWallet"
                     android:text="钱包增值"
                     android:textSize="12sp" />
 
@@ -365,6 +383,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50ImpairmentWallet"
                     android:text="钱包减值"
                     android:textSize="12sp" />
 
@@ -395,6 +414,7 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
+                    android:id="@+id/s50_select_sector_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_line_box"
@@ -403,6 +423,7 @@
 
 
                     <TextView
+                        android:id="@+id/s50_select_sector"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
@@ -433,6 +454,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s50_a_old_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -457,6 +479,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s50_b_old_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -481,6 +504,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s50_a_new_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -505,6 +529,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s50_b_new_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -526,6 +551,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50ModifyControlWord"
                     android:text="修改控制字"
                     android:textSize="12sp" />
 
@@ -534,6 +560,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s50ModifyPrivateKey"
                     android:text="修改密钥"
                     android:textSize="12sp" />
 

@@ -1,35 +1,20 @@
 package com.rfid.app;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.usb.UsbManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.rfid.app.utils.DeviceStateChangeUtils;
-import com.rfid.app.utils.MySharePreference;
-import com.rfid.app.utils.SendByteData;
+import app.terminal.com.serialport.util.DeviceStateChangeUtils;
+import app.terminal.com.serialport.util.SendByteData;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import app.terminal.com.serialport.driver.UsbSerialDriver;
 import app.terminal.com.serialport.driver.UsbSerialPort;
-import app.terminal.com.serialport.driver.UsbSerialProber;
 import app.terminal.com.serialport.util.HexDump;
-import app.terminal.com.serialport.util.SerialInputOutputManager;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
 
 

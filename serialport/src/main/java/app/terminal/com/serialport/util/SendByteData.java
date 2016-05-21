@@ -1,4 +1,4 @@
-package com.rfid.app.utils;
+package app.terminal.com.serialport.util;
 
 /**
  * Created by liu.yao on 2016/5/17.

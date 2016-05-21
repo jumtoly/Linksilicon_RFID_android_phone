@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
-import com.rfid.app.utils.DeviceStateChangeUtils;
-import com.rfid.app.utils.SendByteData;
+import app.terminal.com.serialport.util.DeviceStateChangeUtils;
+import app.terminal.com.serialport.util.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
 

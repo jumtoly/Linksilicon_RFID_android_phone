@@ -25,6 +25,7 @@ import app.terminal.com.serialport.util.DeviceStateChangeUtils;
 import app.terminal.com.serialport.util.FindAddrType;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.KeyType;
+import app.terminal.com.serialport.util.ModifyKey;
 import app.terminal.com.serialport.util.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
@@ -64,6 +65,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     private byte blockAddr = 0;
     private int findAddrType = FindAddrType.ABSOLUTE_ADDR;
     private int keyType = KeyType.KEY_A;
+    private byte selectSector = 0;
 
 
     @Override
@@ -183,7 +185,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         selectSectorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                selectSector = (byte) position;
             }
 
             @Override
@@ -235,7 +237,8 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ReadBlock(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.READ_BLOCK_M1);
+        CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.readBlock(cardData);
     }
 
 
@@ -245,7 +248,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50WriteBlock(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WRITE_BLOCK_M1);
+        byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(cardData);
     }
 
     /**
@@ -254,7 +259,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50InitWallet(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_INITIALIZATION_M1);
+        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.walletInit(cardData);
     }
 
     /**
@@ -263,7 +270,8 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ReadWallet(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_READ_M1);
+        CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.readWallet(cardData);
     }
 
     /**
@@ -272,7 +280,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50AddedWallet(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.WALLET_RECHARGE_M1);
+        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.walletAdd(cardData);
     }
 
     /**
@@ -281,7 +291,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ImpairmentWallet(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.PURSE_DECREMENT_M1);
+        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
+        BaseApp.instance().controlLinksilliconCardIntface.walletDec(cardData);
     }
 
     /**
@@ -290,6 +302,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ModifyControlWord(View v) {
+        //TODO 暂时不写
 
     }
 
@@ -299,7 +312,12 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ModifyPrivateKey(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_DETECTING_CARD_14443A);
+        byte[] aOldKey = HexDump.hexStringToByteArray(aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bOldKey = HexDump.hexStringToByteArray(bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
+        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(modifyKey);
     }
 
     static void show(Context context, UsbSerialPort port) {

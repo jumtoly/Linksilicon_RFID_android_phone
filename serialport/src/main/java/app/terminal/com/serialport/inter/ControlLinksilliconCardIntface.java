@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardInfo;
-import app.terminal.com.serialport.util.KeyType;
+import app.terminal.com.serialport.util.ModifyKey;
 
 /**
  * Created by sly on 2016/5/21.
@@ -65,19 +65,19 @@ public interface ControlLinksilliconCardIntface {
 
     boolean writeBlock(CardData cardData);
 
-    boolean WalletInit(boolean addrMode, int sector, int block, int cardType, byte[] data);
+    boolean walletInit(CardData cardData);
 
-    boolean ReadWallet(boolean addrMode, int sector, int block, int cardType, byte[] value);
+    boolean readWallet(CardData cardData);
 
-    boolean WalletAdd(boolean addrMode, int sector, int block, int cardType, byte[] data);
+    boolean walletAdd(CardData cardData);
 
-    boolean WalletDec(boolean addrMode, int sector, int block, int cardType, byte[] data);
+    boolean walletDec(CardData cardData);
 
     boolean composeRead(CardData cardData);
 
     boolean composeWrite(CardData cardData);
 
-    boolean ModifyKey(int sector, KeyType keyType, byte[] newKey, byte[] oldKeyA, byte[] oldKeyB);
+    boolean modifyKey(ModifyKey modifyKey);
 
     boolean ModifyControl(int sector, byte[] oldKeyA, byte[] oldKeyB, byte[] newCtrlWord);
 

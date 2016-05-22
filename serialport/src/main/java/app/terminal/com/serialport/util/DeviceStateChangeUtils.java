@@ -51,7 +51,7 @@ public class DeviceStateChangeUtils {
 
     public void onDeviceStateChange(byte[] btys) {
         stopIoManager();
-        startIoManager( btys);
+        startIoManager(btys);
     }
 
     private void stopIoManager() {
@@ -62,11 +62,11 @@ public class DeviceStateChangeUtils {
         }
     }
 
-    private void startIoManager( byte[] btys) {
+    private void startIoManager(byte[] btys) {
         if (serialPort != null) {
 //            Log.i(TAG, "Starting io manager ..");
             serialInputOutputManager = new SerialInputOutputManager(serialPort, mListener);
-            serialInputOutputManager.writeAsync( btys);
+            serialInputOutputManager.writeAsync(btys);
             mExecutor.submit(serialInputOutputManager);
         }
     }

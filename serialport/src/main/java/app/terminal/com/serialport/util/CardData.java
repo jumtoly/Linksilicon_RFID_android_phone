@@ -6,11 +6,12 @@ package app.terminal.com.serialport.util;
 public class CardData {
     private byte[] writeData;//控制字
     private int cardType;//卡类型
-    private int findAddrType;//ture 为绝寻址，false为相对寻址
+    private int findAddrType;//寻址方式
     private byte sectorAddr;//扇区地址
     private byte blockAddr;//块地址
     private int keyType;//密钥类型
     private byte[] key;//密钥
+
 
     public byte[] getwriteData() {
         return writeData;
@@ -86,5 +87,20 @@ public class CardData {
         this.blockAddr = blockAddr;
         this.keyType = keyType;
         this.key = key;
+    }
+
+    public CardData(int cardType, int findAddrType, byte sectorAddr, byte blockAddr) {
+        this.cardType = cardType;
+        this.findAddrType = findAddrType;
+        this.sectorAddr = sectorAddr;
+        this.blockAddr = blockAddr;
+    }
+
+    public CardData(byte[] writeData, int cardType, int findAddrType, byte sectorAddr, byte blockAddr) {
+        this.writeData = writeData;
+        this.cardType = cardType;
+        this.findAddrType = findAddrType;
+        this.sectorAddr = sectorAddr;
+        this.blockAddr = blockAddr;
     }
 }

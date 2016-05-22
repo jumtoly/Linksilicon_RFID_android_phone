@@ -14,7 +14,7 @@ import app.terminal.com.serialport.util.SerialportControl;
  * Created by sly on 2016/5/18.
  */
 public class BaseApp extends Application {
-    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
+    public ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
     private static BaseApp instance;
     private UsbManager usbManager;
 

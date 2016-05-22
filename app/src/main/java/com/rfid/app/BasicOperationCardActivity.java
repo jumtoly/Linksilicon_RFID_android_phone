@@ -15,9 +15,7 @@ import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.SerialportControl;
 
 public class BasicOperationCardActivity extends AppCompatActivity {
-    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
 
-    private static UsbSerialPort sPort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +26,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!controlLinksilliconCardIntface.isReaderOpen()) {
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
             this.finish();
@@ -36,7 +34,6 @@ public class BasicOperationCardActivity extends AppCompatActivity {
     }
 
     static void show(Context context, UsbSerialPort port) {
-        sPort = port;
         final Intent intent = new Intent(context, BasicOperationCardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);
@@ -49,7 +46,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      */
     public void getCardInfo(View v) {
         //TODO 没有写完整
-        controlLinksilliconCardIntface.getCardInfo();
+        BaseApp.instance().controlLinksilliconCardIntface.getCardInfo();
     }
 
     /**
@@ -58,7 +55,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void standardFindCard(View v) {
-        controlLinksilliconCardIntface.findCard();
+        BaseApp.instance().controlLinksilliconCardIntface.findCard();
     }
 
     /**
@@ -67,7 +64,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void wakeUpFindCard(View v) {
-        controlLinksilliconCardIntface.wakeUp();
+        BaseApp.instance().controlLinksilliconCardIntface.wakeUp();
     }
 
     /**
@@ -87,7 +84,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void complexFindCard(View v) {
-        controlLinksilliconCardIntface.composeFindCard();
+        BaseApp.instance().controlLinksilliconCardIntface.composeFindCard();
     }
 
     /**
@@ -97,7 +94,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      */
     public void selectCard(View v) {
         //TODO 串联等级，待确认
-        controlLinksilliconCardIntface.selectCard(147);
+        BaseApp.instance().controlLinksilliconCardIntface.selectCard(147);
     }
 
     /**
@@ -106,7 +103,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void stopCard(View v) {
-        controlLinksilliconCardIntface.pauseCard();
+        BaseApp.instance().controlLinksilliconCardIntface.pauseCard();
     }
 
 

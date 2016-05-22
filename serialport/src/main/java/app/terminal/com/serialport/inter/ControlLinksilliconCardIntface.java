@@ -4,6 +4,7 @@ import android.hardware.usb.UsbManager;
 
 import java.io.IOException;
 
+import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardInfo;
 import app.terminal.com.serialport.util.KeyType;
 
@@ -58,11 +59,11 @@ public interface ControlLinksilliconCardIntface {
     //M1卡操作相关函数
     boolean SendM1Command(byte[] m1Cmd, int cmdLen);
 
-    boolean CheckKey(int card, boolean addrMode, int addr, int block, int keyType, byte[] key);
+    boolean checkKey(CardData cardData);
 
-    boolean ReadBlock(boolean addrMode, int sector, int block, int cardType, byte[] data);
+    boolean readBlock(CardData cardData);
 
-    boolean WriteBlock(boolean addrMode, int sector, int block, int cardType, byte[] data);
+    boolean writeBlock(CardData cardData);
 
     boolean WalletInit(boolean addrMode, int sector, int block, int cardType, byte[] data);
 
@@ -72,9 +73,9 @@ public interface ControlLinksilliconCardIntface {
 
     boolean WalletDec(boolean addrMode, int sector, int block, int cardType, byte[] data);
 
-    boolean ComposeRead(boolean addrMode, int sector, int block, int cardType, byte[] data, KeyType keyType, char[] key);
+    boolean composeRead(CardData cardData);
 
-    boolean ComposeWrite(boolean addrMode, int sector, int block, int cardType, byte[] data, KeyType keyType, char[] key);
+    boolean composeWrite(CardData cardData);
 
     boolean ModifyKey(int sector, KeyType keyType, byte[] newKey, byte[] oldKeyA, byte[] oldKeyB);
 

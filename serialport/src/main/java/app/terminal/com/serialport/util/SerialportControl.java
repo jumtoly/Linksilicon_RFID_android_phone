@@ -3,8 +3,6 @@ package app.terminal.com.serialport.util;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
-import android.os.SystemClock;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -162,17 +160,44 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean CheckKey(int card, boolean addrMode, int addr, int block, int keyType, byte[] key) {
+    public boolean checkKey(CardData cardData) {
+        byte[] authenticationM1 = SendByteData.KEY_AUTHENTICATION_M1;
+        if (cardData.getFindAddrType() == FindAddrType.ABSOLUTE_ADDR) {
+            authenticationM1[8] = 1;
+            authenticationM1[9] = 0;
+            authenticationM1[10] = cardData.getBlockAddr();
+        } else {
+            if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
+                //TODO 块地址设置错误
+                return false;
+            } else if ((cardData.getBlockAddr() >= 256) && (cardData.getCardType() == CardType.S70)) {
+                //TODO 块地址设置错误
+                return false;
+            }
+            authenticationM1[8] = 0;
+            authenticationM1[9] = cardData.getSectorAddr();
+            authenticationM1[10] = cardData.getBlockAddr();
+        }
+        if (cardData.getKeyType() == KeyType.KEY_A) {
+            authenticationM1[11] = 0x60;
+        } else if (cardData.getKeyType() == KeyType.KEY_B) {
+            authenticationM1[11] = 0x61;
+        }
+
+        for (int i = 12, j = 0; i < 18; i++, j++) {
+            authenticationM1[i] = cardData.getKey()[j];
+        }
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(authenticationM1);
+        return true;
+    }
+
+    @Override
+    public boolean readBlock(CardData cardData) {
         return false;
     }
 
     @Override
-    public boolean ReadBlock(boolean addrMode, int sector, int block, int cardType, byte[] data) {
-        return false;
-    }
-
-    @Override
-    public boolean WriteBlock(boolean addrMode, int sector, int block, int cardType, byte[] data) {
+    public boolean writeBlock(CardData cardData) {
         return false;
     }
 
@@ -197,13 +222,70 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean ComposeRead(boolean addrMode, int sector, int block, int cardType, byte[] data, KeyType keyType, char[] key) {
-        return false;
+    public boolean composeRead(CardData cardData) {
+        byte[] compositeReadBlockm1 = SendByteData.COMPOSITE_READING_BLOCK_M1;
+        if (cardData.getFindAddrType() == FindAddrType.ABSOLUTE_ADDR) {
+            compositeReadBlockm1[8] = 1;
+            compositeReadBlockm1[9] = 0;
+            compositeReadBlockm1[10] = cardData.getBlockAddr();
+        } else {
+            if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
+                //TODO 块地址设置错误
+                return false;
+            } else if ((cardData.getBlockAddr() >= 256) && (cardData.getCardType() == CardType.S70)) {
+                //TODO 块地址设置错误
+                return false;
+            }
+            compositeReadBlockm1[8] = 0;
+            compositeReadBlockm1[9] = cardData.getSectorAddr();
+            compositeReadBlockm1[10] = cardData.getBlockAddr();
+        }
+        if (cardData.getKeyType() == KeyType.KEY_A) {
+            compositeReadBlockm1[11] = 0x60;
+        } else if (cardData.getKeyType() == KeyType.KEY_B) {
+            compositeReadBlockm1[11] = 0x61;
+        }
+        for (int i = 13, j = 0; i < 19; i++, j++) {
+            compositeReadBlockm1[i] = cardData.getKey()[j];
+        }
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(compositeReadBlockm1);
+        return true;
     }
 
     @Override
-    public boolean ComposeWrite(boolean addrMode, int sector, int block, int cardType, byte[] data, KeyType keyType, char[] key) {
-        return false;
+    public boolean composeWrite(CardData cardData) {
+        byte[] compositeWriteBlockM1 = SendByteData.COMPOSITE_WRITE_BLOCK_M1;
+        if (cardData.getFindAddrType() == FindAddrType.ABSOLUTE_ADDR) {
+            compositeWriteBlockM1[8] = 1;
+            compositeWriteBlockM1[9] = 0;
+            compositeWriteBlockM1[10] = cardData.getBlockAddr();
+        } else {
+            if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
+                //TODO 块地址设置错误
+                return false;
+            } else if ((cardData.getBlockAddr() >= 256) && (cardData.getCardType() == CardType.S70)) {
+                //TODO 块地址设置错误
+                return false;
+            }
+            compositeWriteBlockM1[8] = 0;
+            compositeWriteBlockM1[9] = cardData.getSectorAddr();
+            compositeWriteBlockM1[10] = cardData.getBlockAddr();
+        }
+        if (cardData.getKeyType() == KeyType.KEY_A) {
+            compositeWriteBlockM1[12] = 0x60;
+        } else if (cardData.getKeyType() == KeyType.KEY_B) {
+            compositeWriteBlockM1[12] = 0x61;
+        }
+
+        for (int i = 13, j = 0; i < 19; i++, j++) {
+            compositeWriteBlockM1[i] = cardData.getKey()[j];
+        }
+
+        for (int i = 19, j = 0; i < 35; i++, j++) {
+            compositeWriteBlockM1[i] = cardData.getwriteData()[j];
+        }
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(compositeWriteBlockM1);
+        return true;
     }
 
     @Override
@@ -277,30 +359,5 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         return SerialPortEntity.getInstance().getSerialPort() != null ? true : false;
     }
 
-    CardType GetCardType(byte type) {
-        switch (type) {
-            case 0:
-                return CardType.ULTRALIGHT;
-            case 2:
-                return CardType.S70;
-            case 4:
-                return CardType.S50;
-            case 6:
-                return CardType.IDENTIFICATE;
-            case 8:
-                return CardType.FM1208;
-            case 9:
-                return CardType.UHF;
-            case 0x12:
-                return CardType.SRI512;
-            case 0x42:
-                return CardType.PLUS;
-            case 0x44:
-                return CardType.D41;
-            case (byte) 0xE4:
-                return CardType.ICODE2;
-            default:
-                return CardType.UNKNOWN_CARD;
-        }
-    }
+
 }

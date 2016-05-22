@@ -19,7 +19,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.terminal.com.serialport.util.CardData;
+import app.terminal.com.serialport.util.CardType;
 import app.terminal.com.serialport.util.DeviceStateChangeUtils;
+import app.terminal.com.serialport.util.FindAddrType;
+import app.terminal.com.serialport.util.HexDump;
+import app.terminal.com.serialport.util.KeyType;
 import app.terminal.com.serialport.util.SendByteData;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
@@ -55,6 +60,11 @@ public class S50CardOperateActivity extends AppCompatActivity {
     private List<Integer> selectSectorSpinnerList;
     private ArrayAdapter<Integer> selectSectorSpinnerAdapter;
 
+    private byte sectorAddr = 0;
+    private byte blockAddr = 0;
+    private int findAddrType = FindAddrType.ABSOLUTE_ADDR;
+    private int keyType = KeyType.KEY_A;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +85,6 @@ public class S50CardOperateActivity extends AppCompatActivity {
         sectorAddressSpinnerList = new ArrayList<>();
         blockAddressSpinnerList = new ArrayList<>();
         selectSectorSpinnerList = new ArrayList<>();
-
         findAddrWaySpinnerList.add("绝对寻址");
         findAddrWaySpinnerList.add("相对寻址");
         for (int i = 0; i < 16; i++) {
@@ -124,13 +133,24 @@ public class S50CardOperateActivity extends AppCompatActivity {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-
+                if (aRadioBtn.getId() == checkedId) {
+                    keyType = KeyType.KEY_A;
+                } else {
+                    keyType = KeyType.KEY_B;
+                }
             }
         });
         findAddrWaySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 0) {
+                    findAddrType = FindAddrType.ABSOLUTE_ADDR;
+                    sectorAddressSpinner.setEnabled(true);
+                } else if (position == 1) {
 
+                    findAddrType = FindAddrType.RELATIVE_ADDR;
+                    sectorAddressSpinner.setEnabled(false);
+                }
             }
 
             @Override
@@ -141,7 +161,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         sectorAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                sectorAddr = (byte) position;
             }
 
             @Override
@@ -152,7 +172,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         blockAddressSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
+                blockAddr = (byte) position;
             }
 
             @Override
@@ -181,7 +201,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50KeyAuthentiation(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.KEY_AUTHENTICATION_M1);
+        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
+        BaseApp.instance().controlLinksilliconCardIntface.checkKey(cardData);
     }
 
     /**
@@ -190,7 +212,9 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50CompositeBlockRead(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_READING_BLOCK_M1);
+        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
+        BaseApp.instance().controlLinksilliconCardIntface.composeRead(cardData);
     }
 
     /**
@@ -199,7 +223,10 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50CompositeBlockWrite(View v) {
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.COMPOSITE_WRITE_BLOCK_M1);
+        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
+        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
+        BaseApp.instance().controlLinksilliconCardIntface.composeWrite(cardData);
     }
 
     /**

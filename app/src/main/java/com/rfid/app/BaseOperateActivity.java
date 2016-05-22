@@ -16,8 +16,6 @@ import app.terminal.com.serialport.util.SerialportControl;
 
 public class BaseOperateActivity extends AppCompatActivity {
 
-    private static UsbSerialPort sPort;
-    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +26,7 @@ public class BaseOperateActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!controlLinksilliconCardIntface.isReaderOpen()) {
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
             this.finish();
@@ -41,7 +39,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void manuallyDetectingCard(View v) {
-        controlLinksilliconCardIntface.manualCard();
+        BaseApp.instance().controlLinksilliconCardIntface.manualCard();
     }
 
     /**
@@ -50,7 +48,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAllAntenna(View v) {
-        controlLinksilliconCardIntface.antennaOff();
+        BaseApp.instance().controlLinksilliconCardIntface.antennaOff();
     }
 
     /**
@@ -59,7 +57,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void stopBuzzer(View v) {
-        controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -68,7 +66,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startBuzzer(View v) {
-        controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -77,7 +75,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAutoFindCard(View v) {
-        controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
     }
 
     /**
@@ -86,12 +84,11 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startAutoFindCard(View v) {
-        controlLinksilliconCardIntface.autoFindCard(true);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(true);
     }
 
 
     static void show(Context context, UsbSerialPort port) {
-        sPort = port;
         final Intent intent = new Intent(context, BaseOperateActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

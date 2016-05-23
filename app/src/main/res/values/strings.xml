@@ -6,6 +6,7 @@
     <string name="title_activity_s50_operate">S50</string>
     <string name="title_activity_s70_operate">S70</string>
     <string name="title_activity_cpu_operate">cpu</string>
+    <string name="title_activity_modify_control_word">控制字修改</string>
 
 
     <string name="BAUD_RATE">波特率</string>

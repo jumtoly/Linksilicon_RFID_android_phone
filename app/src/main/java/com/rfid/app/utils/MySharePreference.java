@@ -4,9 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 
 import com.rfid.app.BaseApp;
-import com.rfid.app.MainActivity;
-
-import app.terminal.com.serialport.driver.UsbSerialPort;
 
 /**
  * Created by sly on 2016/5/18.

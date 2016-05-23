@@ -26,20 +26,16 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:background="@drawable/textview_line_box"
+            android:gravity="center_vertical"
             android:textSize="12sp" />
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/edit_line_box"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:onClick="getSerialNumber"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
             android:text="获取序列号"
             android:textSize="12sp" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -57,43 +53,31 @@
             android:textSize="14sp" />
 
         <LinearLayout
+            android:id="@+id/s50_find_addr_way_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="3"
             android:background="@drawable/textview_line_box"
-            android:gravity="center_vertical"
+            android:gravity="center"
             android:orientation="horizontal">
 
 
-            <TextView
-                android:id="@+id/baud_rate_setting_parameters"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:layout_weight="2"
-                android:background="#E1E1E1"
-                android:paddingLeft="2dp"
-                android:textSize="12sp" />
+            <Spinner
 
-            <ImageView
-                android:layout_width="15dp"
-                android:layout_height="10dp"
-                android:src="@drawable/arrow_down" />
+                android:id="@+id/baud_rate_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical" />
         </LinearLayout>
-
 
         <Button
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="5dp"
-            android:background="@drawable/edit_line_box"
-            android:gravity="center"
+            android:layout_height="wrap_content"
             android:onClick="baudRateSetting"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
             android:text="设置波特率"
             android:textSize="12sp" />
+
     </LinearLayout>
 
     <LinearLayout

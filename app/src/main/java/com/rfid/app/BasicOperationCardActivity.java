@@ -26,11 +26,11 @@ public class BasicOperationCardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+        /*if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
             this.finish();
-        }
+        }*/
     }
 
     static void show(Context context, UsbSerialPort port) {

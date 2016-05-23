@@ -2,33 +2,28 @@ package com.rfid.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardType;
-import app.terminal.com.serialport.util.DeviceStateChangeUtils;
 import app.terminal.com.serialport.util.FindAddrType;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.KeyType;
 import app.terminal.com.serialport.util.ModifyKey;
-import app.terminal.com.serialport.util.SendByteData;
-
-import app.terminal.com.serialport.driver.UsbSerialPort;
 
 public class S50CardOperateActivity extends AppCompatActivity {
 
@@ -302,6 +297,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ModifyControlWord(View v) {
+        ModifyControlActivity.show(this);
         //TODO 暂时不写
 
     }

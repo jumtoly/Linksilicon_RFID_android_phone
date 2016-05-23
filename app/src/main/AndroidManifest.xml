@@ -18,7 +18,8 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,7 +64,11 @@
             android:label="@string/title_activity_cpu_operate"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Dialog" />
-
+        <activity
+            android:name=".ModifyControlActivity"
+            android:label="@string/title_activity_modify_control_word"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Dialog" />
     </application>
 
 </manifest>

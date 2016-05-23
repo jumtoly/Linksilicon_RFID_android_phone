@@ -5,8 +5,14 @@ import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import app.terminal.com.serialport.util.DeviceStateChangeUtils;
 import app.terminal.com.serialport.util.SendByteData;
@@ -21,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mDumpTextView;
     private ScrollView mScrollView;
-    private UsbManager mUsbManager;
-    private UsbSerialPort usbSerialPort;
+    private Spinner baudRateSpinner;
+    private int baudRate;
 
 
     @Override
@@ -37,7 +43,31 @@ public class MainActivity extends AppCompatActivity {
     private void init() {
         mDumpTextView = (TextView) findViewById(R.id.consoleText);
         mScrollView = (ScrollView) findViewById(R.id.consoleScroller);
-        mUsbManager = (UsbManager) getSystemService(Context.USB_SERVICE);
+        baudRateSpinner = (Spinner) findViewById(R.id.baud_rate_spinner);
+        final List<Integer> spinnerList = new ArrayList<>();
+        spinnerList.add(115200);
+        spinnerList.add(57600);
+        spinnerList.add(38400);
+        spinnerList.add(19200);
+        spinnerList.add(9600);
+        spinnerList.add(4800);
+        spinnerList.add(2400);
+
+        ArrayAdapter<Integer> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
+        adapter.setDropDownViewResource(R.layout.drop_down_item);
+        baudRateSpinner.setAdapter(adapter);
+        baudRateSpinner.setSelection(4);
+        baudRateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                baudRate = spinnerList.get(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
 

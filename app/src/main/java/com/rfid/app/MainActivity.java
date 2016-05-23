@@ -1,7 +1,5 @@
 package com.rfid.app;
 
-import android.content.Context;
-import android.hardware.usb.UsbManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,14 +8,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import app.terminal.com.serialport.util.DeviceStateChangeUtils;
-import app.terminal.com.serialport.util.SendByteData;
-
-import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.SerialPortEntity;
 
@@ -84,7 +79,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
-//        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+            this.finish();
+        }
+        BaseApp.instance().controlLinksilliconCardIntface.getReaderId();
 
     }
 
@@ -94,7 +94,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void baudRateSetting(View v) {
-//        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.BAUD_RATE);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+            this.finish();
+        }
+        BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(baudRate);
     }
 
     /**
@@ -123,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void basicOperationCard(View v) {
-        BasicOperationCardActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        BasicOperationCardActivity.show(this);
 
     }
 
@@ -133,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void S50(View v) {
-        S50CardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        S50CardOperateActivity.show(this);
 
     }
 
@@ -143,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void S70(View v) {
-        S70CardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        S70CardOperateActivity.show(this);
     }
 
     /**
@@ -152,11 +157,11 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void cpu(View v) {
-        CpuCardOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        CpuCardOperateActivity.show(this);
     }
 
 
-    private void updateReceivedData(byte[] data) {
+    public void updateReceivedData(byte[] data) {
         final String message = "Read " + data.length + " bytes: \n"
                 + HexDump.dumpHexString(data) + "\n\n";
         mDumpTextView.append(message);

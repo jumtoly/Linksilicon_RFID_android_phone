@@ -11,7 +11,6 @@ import app.terminal.com.serialport.driver.UsbSerialPort;
 
 public class CpuCardOperateActivity extends AppCompatActivity {
 
-    private static UsbSerialPort sPort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +24,7 @@ public class CpuCardOperateActivity extends AppCompatActivity {
         getWindow().setAttributes(p);
     }
 
-    static void show(Context context, UsbSerialPort port) {
-        sPort = port;
+    static void show(Context context) {
         final Intent intent = new Intent(context, CpuCardOperateActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

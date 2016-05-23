@@ -45,13 +45,13 @@ public interface ControlLinksilliconCardIntface {
 
     boolean manualCard(/*CardInfo pInfo*/);
 
-    boolean GetReaderId(byte[] pReaderId, int[] pLen);
+    boolean getReaderId();
 
     boolean composeFindCard();
 
     boolean pauseCard();
 
-    boolean SetBaudRate(int baud);
+    boolean setBaudRate(int baud);
 
     boolean ReadReaderRegs(int Addr, byte RegNum, byte[] Dest);
 

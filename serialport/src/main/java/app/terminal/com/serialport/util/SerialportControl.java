@@ -1,5 +1,6 @@
 package app.terminal.com.serialport.util;
 
+import android.content.Context;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
@@ -20,6 +21,7 @@ import app.terminal.com.serialport.inter.ControlLinksilliconCardIntface;
 public class SerialportControl implements ControlLinksilliconCardIntface {
     private UsbSerialPort usbSerialPort;
     private static boolean isReaderOpen;
+
 
     @Override
     public boolean openReader(UsbManager usbManager, int baudRate, int dataBits, int stopBits, int parity) throws IOException {
@@ -129,25 +131,53 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean GetReaderId(byte[] pReaderId, int[] pLen) {
+    public boolean getReaderId() {
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+
         return false;
     }
 
     @Override
     public boolean composeFindCard() {
         DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.COMPOSITE_DETECTING_CARD_14443A);
-        return false;
+        return true;
     }
 
     @Override
     public boolean pauseCard() {
         DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.DORMANCY_14443A);
-        return false;
+        return true;
     }
 
     @Override
-    public boolean SetBaudRate(int baud) {
-        return false;
+    public boolean setBaudRate(int baud) {
+        byte[] baudRate = SendByteData.BAUD_RATE;
+        switch (baud) {
+            case 2400:
+                baudRate[8] = 0x01;
+                break;
+            case 4800:
+                baudRate[8] = 0x02;
+                break;
+            case 9600:
+                baudRate[8] = 0x03;
+                break;
+            case 19200:
+                baudRate[8] = 0x04;
+                break;
+            case 38400:
+                baudRate[8] = 0x05;
+                break;
+            case 57600:
+                baudRate[8] = 0x06;
+                break;
+            case 115200:
+                baudRate[8] = 0x07;
+                break;
+        }
+        baudRate[9] = CheckSum(baudRate, 9);
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(baudRate);
+        return true;
     }
 
     @Override
@@ -592,31 +622,30 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
 
+    /*  private boolean checkCtrlKey(boolean AorB, int block, byte[] key) {
 
-  /*  private boolean checkCtrlKey(boolean AorB, int block, byte[] key) {
+          byte checkkey[] = SendByteData.CHECK_CTRL_KEY;
+          checkkey[9] = (byte) block;
+          if (block >= 32) {
+              checkkey[10] = 15;
+          } else {
+              checkkey[10] = 3;
+          }
 
-        byte checkkey[] = SendByteData.CHECK_CTRL_KEY;
-        checkkey[9] = (byte) block;
-        if (block >= 32) {
-            checkkey[10] = 15;
-        } else {
-            checkkey[10] = 3;
-        }
+          if (AorB) {
+              checkkey[11] = 0x60;
+          } else {
+              checkkey[11] = 0x61;
+          }
 
-        if (AorB) {
-            checkkey[11] = 0x60;
-        } else {
-            checkkey[11] = 0x61;
-        }
+          for (int i = 12, j = 0; i < 18; i++, j++) {
+              checkkey[i] = key[j];
+          }
 
-        for (int i = 12, j = 0; i < 18; i++, j++) {
-            checkkey[i] = key[j];
-        }
-
-        checkkey[18] = CheckSum(checkkey, 19);
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(checkkey);
-        return false;
-    }*/
+          checkkey[18] = CheckSum(checkkey, 19);
+          DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(checkkey);
+          return false;
+      }*/
     @Override
     public boolean ModifyControl(int sector, byte[] oldKeyA, byte[] oldKeyB, byte[] newCtrlWord) {
         return false;

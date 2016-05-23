@@ -1,7 +1,9 @@
 package app.terminal.com.serialport.util;
 
+import android.content.Context;
 import android.hardware.usb.UsbDeviceConnection;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +18,9 @@ public class DeviceStateChangeUtils {
     private SerialInputOutputManager serialInputOutputManager;
     private static DeviceStateChangeUtils deviceStateChangeUtils;
     private static UsbSerialPort serialPort;
+    private static String currentOperateStr;
     private int count = 0;
+    private StringBuilder msgSb = new StringBuilder();
 
     private DeviceStateChangeUtils() {
 
@@ -30,6 +34,9 @@ public class DeviceStateChangeUtils {
         return deviceStateChangeUtils;
     }
 
+    public static void setCurrentExeOperate(String operateStr) {
+        currentOperateStr = operateStr;
+    }
 
     private final SerialInputOutputManager.Listener mListener =
             new SerialInputOutputManager.Listener() {
@@ -37,6 +44,17 @@ public class DeviceStateChangeUtils {
 
                 @Override
                 public void onNewData(byte[] data) {
+                    if (count % 2 == 0) {
+                        msgSb.append("发送命令:").append(HexDump.toHexString(data)).append(System.getProperty("line.separator"));
+                    } else {
+                        msgSb.append("接收数据：").append(HexDump.toHexString(data));
+                        if (CheckResponeData.isOk(data)) {
+                            msgSb.append(currentOperateStr).append("执行成功").append(System.getProperty("line.separator"));
+                        } else {
+                            msgSb.append(CheckResponeData.getErrorInfo(data)).append(System.getProperty("line.separator"));
+                        }
+                    }
+                    count++;
                     Log.i("DeviceStateChangeUtils", HexDump.toHexString(data));
 
                 }

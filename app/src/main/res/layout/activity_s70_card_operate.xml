@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:scrollbars="none"
-    tools:context="com.rfid.app.S70CardOperateActivity">
+    tools:context="com.rfid.app.S50CardOperateActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -35,6 +35,7 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
+                    android:id="@+id/s70_find_addr_way_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_line_box"
@@ -42,19 +43,11 @@
                     android:orientation="horizontal">
 
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_weight="2"
-                        android:background="#E1E1E1"
-                        android:paddingLeft="2dp"
-                        android:textSize="12sp" />
-
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="10dp"
-                        android:src="@drawable/arrow_down" />
+                    <Spinner
+                        android:id="@+id/s70_find_addr_way_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -78,6 +71,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/s70_sector_address_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/textview_line_box"
@@ -85,19 +79,21 @@
                         android:orientation="horizontal">
 
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:background="#E1E1E1"
-                            android:paddingLeft="2dp"
-                            android:textSize="12sp" />
+                        <!--  <TextView
+                              android:id="@+id/s70_sector_address"
+                              android:layout_width="0dp"
+                              android:layout_height="match_parent"
+                              android:layout_gravity="center"
+                              android:layout_weight="2"
+                              android:background="#E1E1E1"
+                              android:paddingLeft="2dp"
+                              android:textSize="12sp" />-->
 
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="10dp"
-                            android:src="@drawable/arrow_down" />
+                        <Spinner
+                            android:id="@+id/s70_sector_address_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -117,6 +113,7 @@
                         android:textSize="12sp" />
 
                     <LinearLayout
+                        android:id="@+id/s70_block_address_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/textview_line_box"
@@ -124,19 +121,11 @@
                         android:orientation="horizontal">
 
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="center"
-                            android:layout_weight="2"
-                            android:background="#E1E1E1"
-                            android:paddingLeft="2dp"
-                            android:textSize="12sp" />
-
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="10dp"
-                            android:src="@drawable/arrow_down" />
+                        <Spinner
+                            android:id="@+id/s70_block_address_spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="30dp"
+                            android:layout_gravity="center_vertical" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -155,17 +144,20 @@
                     android:textSize="12sp" />
 
                 <RadioGroup
+                    android:id="@+id/s70_key_type_radiogroup"
                     android:layout_width="match_parent"
                     android:layout_height="20dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <RadioButton
+                        android:id="@+id/s70_key_type_radiobtn_A"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="A型" />
 
                     <RadioButton
+                        android:id="@+id/s70_key_type_radiobtn_B"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="B型" />
@@ -187,13 +179,15 @@
 
 
                 <EditText
+                    android:id="@+id/s70_private_key"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="FF FF FF FF FF FF"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -211,6 +205,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70KeyAuthentiation"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="密钥验证"
@@ -223,6 +218,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70CompositeBlockRead"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="复合读块"
@@ -235,6 +231,7 @@
                     android:layout_marginLeft="2dp"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70CompositeBlockWrite"
                     android:paddingLeft="3dp"
                     android:paddingRight="3dp"
                     android:text="复合写块"
@@ -256,11 +253,13 @@
 
 
                 <EditText
+                    android:id="@+id/s70_block_data"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="00 01 02 03 04 05 06 07 08 09 0a 0b 0c 0d 0e 0f"
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -277,6 +276,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70ReadBlock"
                     android:text="读块"
                     android:textSize="12sp" />
 
@@ -285,6 +285,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70WriteBlock"
                     android:text="写块"
                     android:textSize="12sp" />
 
@@ -297,7 +298,6 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:padding="5dp">
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -313,6 +313,7 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s70_money_num"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
@@ -333,6 +334,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70InitWallet"
                     android:text="钱包初始化"
                     android:textSize="12sp" />
 
@@ -341,6 +343,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70ReadWallet"
                     android:text="读钱包"
                     android:textSize="12sp" />
 
@@ -358,6 +361,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70AddedWallet"
                     android:text="钱包增值"
                     android:textSize="12sp" />
 
@@ -366,6 +370,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70ImpairmentWallet"
                     android:text="钱包减值"
                     android:textSize="12sp" />
 
@@ -396,6 +401,7 @@
                     android:textSize="12sp" />
 
                 <LinearLayout
+                    android:id="@+id/s70_select_sector_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/textview_line_box"
@@ -403,19 +409,11 @@
                     android:orientation="horizontal">
 
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_gravity="center"
-                        android:layout_weight="2"
-                        android:background="#E1E1E1"
-                        android:paddingLeft="2dp"
-                        android:textSize="12sp" />
-
-                    <ImageView
-                        android:layout_width="15dp"
-                        android:layout_height="10dp"
-                        android:src="@drawable/arrow_down" />
+                    <Spinner
+                        android:id="@+id/s70_select_sector_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center_vertical" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -434,13 +432,15 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s70_a_old_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="FF FF FF FF FF FF"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -458,13 +458,15 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s70_b_old_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="FF FF FF FF FF FF"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -482,13 +484,15 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s70_a_new_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="FF FF FF FF FF FF"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -506,13 +510,15 @@
                     android:textSize="12sp" />
 
                 <EditText
+                    android:id="@+id/s70_b_new_key"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_weight="2"
                     android:background="@drawable/edit_line_box_white"
+                    android:text="FF FF FF FF FF FF"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
@@ -527,6 +533,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70ModifyControlWord"
                     android:text="修改控制字"
                     android:textSize="12sp" />
 
@@ -535,6 +542,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
+                    android:onClick="s70ModifyPrivateKey"
                     android:text="修改密钥"
                     android:textSize="12sp" />
 

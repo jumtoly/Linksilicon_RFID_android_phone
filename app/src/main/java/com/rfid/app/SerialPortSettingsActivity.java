@@ -35,7 +35,6 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
     private int stopBits = UsbSerialPort.STOPBITS_1;
     private int parity = UsbSerialPort.PARITY_NONE;
     private UsbManager mUsbManager;
-    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,15 +42,15 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
         addPreferencesFromResource(R.xml.serial_port_preferences);
         ListView listView = getListView();
         final Button submit = new Button(this);
-        mUsbManager =BaseApp.instance().getUsbManager();
-        submit.setText(controlLinksilliconCardIntface.isReaderOpen() ? "关闭串口" : "打开串口");
+        mUsbManager = BaseApp.instance().getUsbManager();
+        submit.setText(BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen() ? "关闭串口" : "打开串口");
         listView.addFooterView(submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!controlLinksilliconCardIntface.isReaderOpen()) {
+                if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
                     try {
-                        if (controlLinksilliconCardIntface.openReader(mUsbManager, baudRate, dataBits, stopBits, parity)) {
+                        if (BaseApp.instance().controlLinksilliconCardIntface.openReader(mUsbManager, baudRate, dataBits, stopBits, parity)) {
                             submit.setText("关闭串口");
                             Toast.makeText(SerialPortSettingsActivity.this, "Success opening device", Toast.LENGTH_SHORT).show();
                         } else {
@@ -68,7 +67,7 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
 
                 } else {
                     try {
-                        controlLinksilliconCardIntface.closeReader(mUsbManager);
+                        BaseApp.instance().controlLinksilliconCardIntface.closeReader(mUsbManager);
                         submit.setText("打开串口");
                         Toast.makeText(SerialPortSettingsActivity.this, "Success closing device", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
@@ -164,8 +163,15 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
             dataBits = Integer.parseInt(dataBitsPreference.getValue());
         }
         if ("STOP_BITS".equals(key)) {
-            stopBits = Integer.parseInt(stopBitsPreference.getValue());
+            if ("1".equals(stopBitsPreference.getValue())) {
+                stopBits = UsbSerialPort.STOPBITS_1;
+            } else if ("1.5".equals(stopBitsPreference.getValue())) {
+                stopBits = UsbSerialPort.STOPBITS_1_5;
+            } else {
+                stopBits = UsbSerialPort.STOPBITS_2;
+            }
         }
+
     }
 
     @Override

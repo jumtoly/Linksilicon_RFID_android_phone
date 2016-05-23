@@ -33,7 +33,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
         }*/
     }
 
-    static void show(Context context, UsbSerialPort port) {
+    static void show(Context context) {
         final Intent intent = new Intent(context, BasicOperationCardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

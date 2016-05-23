@@ -27,7 +27,6 @@ import app.terminal.com.serialport.util.ModifyKey;
 
 public class S50CardOperateActivity extends AppCompatActivity {
 
-    private static UsbSerialPort sPort;
     private EditText privateKeyEt;
     private EditText blockDataEt;
     private EditText moneyNumEt;
@@ -316,8 +315,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         BaseApp.instance().controlLinksilliconCardIntface.modifyKey(modifyKey);
     }
 
-    static void show(Context context, UsbSerialPort port) {
-        sPort = port;
+    static void show(Context context) {
         final Intent intent = new Intent(context, S50CardOperateActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY);
         context.startActivity(intent);

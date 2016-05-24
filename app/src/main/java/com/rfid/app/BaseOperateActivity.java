@@ -39,7 +39,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void manuallyDetectingCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.manualCard();
+        BaseApp.instance().controlLinksilliconCardIntface.manualCard(this);
     }
 
     /**
@@ -48,7 +48,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAllAntenna(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.antennaOff();
+        BaseApp.instance().controlLinksilliconCardIntface.antennaOff(this);
     }
 
     /**
@@ -57,7 +57,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void stopBuzzer(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.buzzerOn(this, false);
     }
 
     /**
@@ -66,7 +66,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startBuzzer(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.buzzerOn(this, true);
     }
 
     /**
@@ -75,7 +75,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void closeAutoFindCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(false);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(this, false);
     }
 
     /**
@@ -84,7 +84,7 @@ public class BaseOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void startAutoFindCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(true);
+        BaseApp.instance().controlLinksilliconCardIntface.autoFindCard(this, true);
     }
 
 

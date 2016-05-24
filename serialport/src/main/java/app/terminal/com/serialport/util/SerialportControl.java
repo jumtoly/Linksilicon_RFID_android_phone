@@ -22,6 +22,7 @@ import app.terminal.com.serialport.inter.ResponeDataIntface;
  * Created by sly on 2016/5/21.
  */
 public class SerialportControl implements ControlLinksilliconCardIntface {
+    private static final String TAG = SerialportControl.class.getSimpleName();
     private UsbSerialPort usbSerialPort;
     private static boolean isReaderOpen;
 
@@ -100,36 +101,132 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean autoFindCard(boolean bOn) {
+    public boolean autoFindCard(final Context context, boolean bOn) {
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
         if (bOn) {
-            DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.START_AUTO_FIND_CARD);
+            stateChangeUtils.onDeviceStateChange(SendByteData.START_AUTO_FIND_CARD, responeDataIntface);
         } else {
-            DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.STOP_AUTO_FIND_CARD);
+            stateChangeUtils.onDeviceStateChange(SendByteData.STOP_AUTO_FIND_CARD, responeDataIntface);
         }
 
         return false;
     }
 
     @Override
-    public boolean buzzerOn(boolean bOn) {
+    public boolean buzzerOn(final Context context, boolean bOn) {
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
         if (bOn) {
-            DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.START_BUZZER);
+            stateChangeUtils.onDeviceStateChange(SendByteData.START_BUZZER, responeDataIntface);
         } else {
-            DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.STOP_BUZZER);
+            stateChangeUtils.onDeviceStateChange(SendByteData.STOP_BUZZER, responeDataIntface);
 
         }
         return false;
     }
 
     @Override
-    public boolean antennaOff() {
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.STOP_ALL_ANTENNA);
+    public boolean antennaOff(final Context context) {
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(SendByteData.STOP_ALL_ANTENNA, responeDataIntface);
         return false;
     }
 
     @Override
-    public boolean manualCard(/*CardInfo pInfo*/) {
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.MANUALLY_DETECTING_CARD);
+    public boolean manualCard(final Context context) {
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(SendByteData.MANUALLY_DETECTING_CARD, responeDataIntface);
         return false;
     }
 
@@ -138,25 +235,27 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         final boolean[] result = {false};
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
             @Override
             public void responseData(byte[] data) {
-                Log.i("SerialportControl", "responseData：" + HexDump.toHexString(data));
-                Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
                 mIntent.putExtra("RESPONSEDATA", data);
-
-                //发送广播
                 context.sendBroadcast(mIntent);
+
             }
 
             @Override
             public void sendData(byte[] data) {
-                Log.i("SerialportControl", "sendData：" + HexDump.toHexString(data));
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
             }
 
             @Override
             public void onRunError(Exception e) {
-
+                Log.i(TAG, "onRunError：" + e.toString());
             }
+
         };
         stateChangeUtils.onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE, responeDataIntface);
 
@@ -176,7 +275,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean setBaudRate(int baud) {
+    public boolean setBaudRate(final Context context, int baud) {
         byte[] baudRate = SendByteData.BAUD_RATE;
         switch (baud) {
             case 2400:
@@ -202,20 +301,25 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 break;
         }
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
             @Override
             public void responseData(byte[] data) {
-                Log.i("SerialportControl", "responseDatasetBaudRate：" + HexDump.toHexString(data));
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
 
             }
 
             @Override
             public void sendData(byte[] data) {
-                Log.i("SerialportControl", "sendDatasetBaudRate：" + HexDump.toHexString(data));
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
             }
 
             @Override
             public void onRunError(Exception e) {
-
+                Log.i(TAG, "onRunError：" + e.toString());
             }
         };
         baudRate[9] = CheckSum(baudRate, 9);

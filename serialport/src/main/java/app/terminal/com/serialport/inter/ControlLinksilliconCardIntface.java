@@ -38,13 +38,13 @@ public interface ControlLinksilliconCardIntface {
 
     boolean getCardInfo(/*CardInfo cardInfo*/);
 
-    boolean autoFindCard(boolean bOn);
+    boolean autoFindCard(Context context, boolean bOn);
 
-    boolean buzzerOn(boolean bOn);
+    boolean buzzerOn(Context context,boolean bOn);
 
-    boolean antennaOff();
+    boolean antennaOff(Context context);
 
-    boolean manualCard(/*CardInfo pInfo*/);
+    boolean manualCard(Context context);
 
     boolean getReaderId(Context context);
 
@@ -52,7 +52,7 @@ public interface ControlLinksilliconCardIntface {
 
     boolean pauseCard();
 
-    boolean setBaudRate(int baud);
+    boolean setBaudRate(Context context, int baud);
 
     boolean ReadReaderRegs(int Addr, byte RegNum, byte[] Dest);
 

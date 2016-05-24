@@ -2,17 +2,10 @@ package com.rfid.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
-
-import app.terminal.com.serialport.inter.ControlLinksilliconCardIntface;
-import app.terminal.com.serialport.util.DeviceStateChangeUtils;
-import app.terminal.com.serialport.util.SendByteData;
-
-import app.terminal.com.serialport.driver.UsbSerialPort;
-import app.terminal.com.serialport.util.SerialportControl;
 
 public class BasicOperationCardActivity extends AppCompatActivity {
 
@@ -26,11 +19,11 @@ public class BasicOperationCardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        /*if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
             this.finish();
-        }*/
+        }
     }
 
     static void show(Context context) {

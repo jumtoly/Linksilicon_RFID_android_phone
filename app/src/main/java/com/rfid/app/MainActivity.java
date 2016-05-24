@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.terminal.com.serialport.inter.BroadcastIntface;
+import app.terminal.com.serialport.util.CheckResponeData;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.SerialPortEntity;
 
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ScrollView mScrollView;
     private Spinner baudRateSpinner;
     private int baudRate;
+    private String sendCmd;
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -36,10 +38,24 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (action.equals(BroadcastIntface.GETREADERID_BROADCASTRECEIVER)) {
                 byte[] responsedata = intent.getByteArrayExtra("RESPONSEDATA");
-                ((TextView) findViewById(R.id.serial_number)).setText(HexDump.toHexString(responsedata));
+                byte[] sendData = intent.getByteArrayExtra("SENDDATA");
+                updateReceivedData(sendData, responsedata);
+
             }
         }
     };
+
+    private String getCardId(byte[] data) {
+        byte[] result = new byte[4];
+        if (data.length >= 12) {
+            for (int i = 0; i < 4; i++) {
+                result[i] = data[i + 7];
+            }
+            return HexDump.toHexString(result);
+        }
+        return "";
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
         }
-        BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(baudRate);
+        BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(this, baudRate);
     }
 
     /**
@@ -182,11 +198,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateReceivedData(byte[] data) {
-        final String message = "Read " + data.length + " bytes: \n"
-                + HexDump.dumpHexString(data) + "\n\n";
-        mDumpTextView.append(message);
-        mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
+    public void updateReceivedData(byte[] data, byte[] responsedata) {
+
+        if (responsedata != null) {
+            if (CheckResponeData.isOk(responsedata)) {
+                StringBuilder msg = new StringBuilder();
+                msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append("执行命令成功").append(System.getProperty("line.separator") + System.getProperty("line.separator"));
+                ;
+                mDumpTextView.append(msg.toString());
+                mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
+                ((TextView) findViewById(R.id.serial_number)).setText(getCardId(responsedata));
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                mDumpTextView.append(msg.toString());
+                mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
+                ((TextView) findViewById(R.id.serial_number)).setText(getCardId(responsedata));
+            }
+
+        }
+
+
+    }
+
+    public void clearData(View v) {
+        mDumpTextView.setText("");
     }
 
     @Override

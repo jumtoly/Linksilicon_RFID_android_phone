@@ -148,16 +148,25 @@
     <ScrollView
         android:id="@+id/consoleScroller"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="200dp"
         android:layout_margin="5dp"
+        android:layout_weight="3"
         android:background="@drawable/edit_line_box_white"
         android:padding="5dp">
 
         <TextView
             android:id="@+id/consoleText"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/black" />
     </ScrollView>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:onClick="clearData"
+        android:text="清除数据" />
 
 
 </LinearLayout>

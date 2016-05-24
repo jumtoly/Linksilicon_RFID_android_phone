@@ -21,15 +21,14 @@
 
 package app.terminal.com.serialport.util;
 
-import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbRequest;
 import android.util.Log;
-
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.inter.ResponeDataIntface;
 
 /**
  * Utility class which services a {@link UsbSerialPort} in its {@link #run()}
@@ -62,7 +61,7 @@ public class SerialInputOutputManager implements Runnable {
     private State mState = State.STOPPED;
 
     // Synchronized by 'this'
-    private Listener mListener;
+    private ResponeDataIntface mListener;
 
     public interface Listener {
         /**
@@ -87,16 +86,16 @@ public class SerialInputOutputManager implements Runnable {
     /**
      * Creates a new instance with the provided listener.
      */
-    public SerialInputOutputManager(UsbSerialPort driver, Listener listener) {
+    public SerialInputOutputManager(UsbSerialPort driver, ResponeDataIntface listener) {
         mDriver = driver;
         mListener = listener;
     }
 
-    public synchronized void setListener(Listener listener) {
+    public synchronized void setListener(ResponeDataIntface listener) {
         mListener = listener;
     }
 
-    public synchronized Listener getListener() {
+    public synchronized ResponeDataIntface getListener() {
         return mListener;
     }
 
@@ -145,7 +144,7 @@ public class SerialInputOutputManager implements Runnable {
             }
         } catch (Exception e) {
             Log.w(TAG, "Run ending due to exception: " + e.getMessage(), e);
-            final Listener listener = getListener();
+            final ResponeDataIntface listener = getListener();
             if (listener != null) {
                 listener.onRunError(e);
             }
@@ -162,11 +161,11 @@ public class SerialInputOutputManager implements Runnable {
         int len = mDriver.read(mReadBuffer.array(), READ_WAIT_MILLIS);
         if (len > 0) {
             if (DEBUG) Log.d(TAG, "Read data len=" + len);
-            final Listener listener = getListener();
+            final ResponeDataIntface listener = getListener();
             if (listener != null) {
                 final byte[] data = new byte[len];
                 mReadBuffer.get(data, 0, len);
-                listener.onNewData(data);
+                listener.responseData(data);
             }
             mReadBuffer.clear();
         }
@@ -189,10 +188,10 @@ public class SerialInputOutputManager implements Runnable {
             int writeLen = mDriver.write(outBuff, READ_WAIT_MILLIS);
             if (writeLen > 0) {
                 if (DEBUG) Log.d(TAG, "Write data len=" + len);
-                final Listener listener = getListener();
+                final ResponeDataIntface listener = getListener();
                 if (listener != null) {
                     final byte[] data = new byte[len];
-                    listener.onNewData(outBuff);
+                    listener.sendData(outBuff);
                 }
                 mReadBuffer.clear();
             }

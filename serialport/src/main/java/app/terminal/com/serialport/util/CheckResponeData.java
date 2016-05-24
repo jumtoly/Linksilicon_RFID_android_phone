@@ -17,7 +17,7 @@ public class CheckResponeData {
         byte byt = 0;
         if (data.length >= 7 && data[6] == 0) {
             return "";
-        } else {
+        } else if (data.length >= 7) {
             switch (data[6]) {
 
 

@@ -5,6 +5,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
 import android.os.SystemClock;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import app.terminal.com.serialport.driver.UsbSerialDriver;
 import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.driver.UsbSerialProber;
 import app.terminal.com.serialport.inter.ControlLinksilliconCardIntface;
+import app.terminal.com.serialport.inter.ResponeDataIntface;
 
 /**
  * Created by sly on 2016/5/21.
@@ -132,7 +134,24 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
     @Override
     public boolean getReaderId() {
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        /*stateChangeUtils.setResponeDataIntface(new ResponeDataIntface() {
+            @Override
+            public void responseData(byte[] data) {
+                Log.i("SerialportControl", "responseData：" + HexDump.toHexString(data));
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i("SerialportControl", "sendData：" + HexDump.toHexString(data));
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+
+            }
+        });*/
+        stateChangeUtils.onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
 
         return false;
     }

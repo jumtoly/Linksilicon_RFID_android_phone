@@ -24,6 +24,7 @@ import app.terminal.com.serialport.util.SerialportControl;
 
 public class SerialPortSettingsActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
     private final String TAG = SerialPortSettingsActivity.class.getSimpleName();
+    private ControlLinksilliconCardIntface controlLinksilliconCardIntface = new SerialportControl();
     private boolean isOpenTag = true;
     private ListPreference baudratesPreference;
     private ListPreference checkDigitsPreference;
@@ -48,9 +49,9 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+                if (!controlLinksilliconCardIntface.isReaderOpen()) {
                     try {
-                        if (BaseApp.instance().controlLinksilliconCardIntface.openReader(mUsbManager, baudRate, dataBits, stopBits, parity)) {
+                        if (controlLinksilliconCardIntface.openReader(mUsbManager, baudRate, dataBits, stopBits, parity)) {
                             submit.setText("关闭串口");
                             Toast.makeText(SerialPortSettingsActivity.this, "Success opening device", Toast.LENGTH_SHORT).show();
                         } else {
@@ -67,7 +68,7 @@ public class SerialPortSettingsActivity extends PreferenceActivity implements Sh
 
                 } else {
                     try {
-                        BaseApp.instance().controlLinksilliconCardIntface.closeReader(mUsbManager);
+                        controlLinksilliconCardIntface.closeReader(mUsbManager);
                         submit.setText("打开串口");
                         Toast.makeText(SerialPortSettingsActivity.this, "Success closing device", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {

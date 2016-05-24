@@ -82,8 +82,11 @@ public class S70CardOperateActivity extends AppCompatActivity {
         selectSectorSpinnerList = new ArrayList<>();
         findAddrWaySpinnerList.add("绝对寻址");
         findAddrWaySpinnerList.add("相对寻址");
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 40; i++) {
             sectorAddressSpinnerList.add(i);
+
+        }
+        for (int i = 0; i < 64; i++) {
             selectSectorSpinnerList.add(i);
         }
         for (int i = 0; i < 4; i++) {
@@ -198,7 +201,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70KeyAuthentiation(View v) {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.checkKey(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.checkKey(this, cardData);
     }
 
     /**
@@ -209,7 +212,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70CompositeBlockRead(View v) {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.composeRead(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.composeRead(this, cardData);
     }
 
     /**
@@ -221,7 +224,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.composeWrite(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.composeWrite(this, cardData);
     }
 
     /**
@@ -231,7 +234,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      */
     public void s70ReadBlock(View v) {
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readBlock(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.readBlock(this, cardData);
     }
 
 
@@ -243,7 +246,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70WriteBlock(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(this, cardData);
     }
 
     /**
@@ -254,7 +257,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70InitWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletInit(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
     }
 
     /**
@@ -264,7 +267,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      */
     public void s70ReadWallet(View v) {
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readWallet(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.readWallet(this, cardData);
     }
 
     /**
@@ -275,7 +278,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70AddedWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletAdd(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletAdd(this, cardData);
     }
 
     /**
@@ -286,7 +289,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     public void s70ImpairmentWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletDec(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletDec(this, cardData);
     }
 
     /**
@@ -311,7 +314,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
         byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(modifyKey);
+        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, modifyKey);
     }
 
     static void show(Context context) {

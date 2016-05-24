@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 updateReceivedData(sendData, responsedata);
 
             }
+
         }
     };
 
@@ -204,13 +205,17 @@ public class MainActivity extends AppCompatActivity {
             if (CheckResponeData.isOk(responsedata)) {
                 StringBuilder msg = new StringBuilder();
                 msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append("执行命令成功").append(System.getProperty("line.separator") + System.getProperty("line.separator"));
-                ;
                 mDumpTextView.append(msg.toString());
                 mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
                 ((TextView) findViewById(R.id.serial_number)).setText(getCardId(responsedata));
             } else {
                 StringBuilder msg = new StringBuilder();
-                msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                if (data != null) {
+
+                    msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                } else {
+                    msg.append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                }
                 mDumpTextView.append(msg.toString());
                 mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());
                 ((TextView) findViewById(R.id.serial_number)).setText(getCardId(responsedata));

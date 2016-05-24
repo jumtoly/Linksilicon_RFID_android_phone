@@ -1,19 +1,118 @@
 package com.rfid.app;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-public class BasicOperationCardActivity extends AppCompatActivity {
+import app.terminal.com.serialport.inter.BroadcastIntface;
+import app.terminal.com.serialport.util.CheckResponeData;
+import app.terminal.com.serialport.util.HexDump;
 
+public class BasicOperationCardActivity extends AppCompatActivity {
+    private TextView cardInfo;
+    private BroadcastReceiver getCardInfoBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BroadcastIntface.GETCARDDATA_BROADCASTRECEIVER)) {
+                byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
+                byte[] sendData = intent.getByteArrayExtra("SENDDATA");
+                updateReceivedData(sendData, respondents);
+
+            }
+        }
+    };
+    private BroadcastReceiver conflictBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BroadcastIntface.CONFLICT_BROADCASTRECEIVER)) {
+
+                byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
+                byte[] sendData = intent.getByteArrayExtra("SENDDATA");
+
+                if (respondents[7] == 0x88) {
+                    BaseApp.instance().controlLinksilliconCardIntface.selectCard(BasicOperationCardActivity.this, (byte) 0x95);
+                    BaseApp.instance().controlLinksilliconCardIntface.conflict(BasicOperationCardActivity.this, (byte) 0x95);
+                }
+                Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+                mIntent.putExtra("SENDDATA", sendData);
+                mIntent.putExtra("RESPONSEDATA", respondents);
+                sendBroadcast(mIntent);
+
+
+            }
+        }
+    };
+
+    public void updateReceivedData(byte[] data, byte[] responsedata) {
+
+        if (responsedata != null) {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+            mIntent.putExtra("SENDDATA", data);
+            mIntent.putExtra("RESPONSEDATA", responsedata);
+            sendBroadcast(mIntent);
+            if (CheckResponeData.isOk(responsedata)) {
+                cardInfo.setText(getCardId(responsedata));
+            } else {
+                cardInfo.setText(getCardId(responsedata));
+            }
+
+        }
+
+
+    }
+
+    private String getCardId(byte[] data) {
+        byte[] result = new byte[4];
+        String cardType = "";
+        if (data.length >= 13) {
+            for (int i = 0; i < 4; i++) {
+                result[i] = data[i + 8];
+            }
+            switch (data[7]) {
+                case 0x04:
+                    cardType = "S50卡";
+                    break;
+                case 0x02:
+                    cardType = "S70卡";
+                    break;
+                case 0x08:
+                    cardType = "CPU卡";
+                    break;
+                case 0x06:
+                    cardType = "身份证";
+                    break;
+            }
+            return HexDump.toHexString(result) + cardType;
+        }
+        return "";
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_basic_operation_card);
+        cardInfo = (TextView) findViewById(R.id.card_info);
+        registerBoradcastReceiver();
+    }
+
+    private void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction(BroadcastIntface.GETCARDDATA_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(getCardInfoBroadcastReceiver, myIntentFilter);
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BroadcastIntface.CONFLICT_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(conflictBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -38,8 +137,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void getCardInfo(View v) {
-        //TODO 没有写完整
-        BaseApp.instance().controlLinksilliconCardIntface.getCardInfo();
+        BaseApp.instance().controlLinksilliconCardIntface.getCardInfo(this);
     }
 
     /**
@@ -48,7 +146,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void standardFindCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.findCard();
+        BaseApp.instance().controlLinksilliconCardIntface.findCard(this);
     }
 
     /**
@@ -57,7 +155,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void wakeUpFindCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.wakeUp();
+        BaseApp.instance().controlLinksilliconCardIntface.wakeUp(this);
     }
 
     /**
@@ -66,9 +164,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void antiCollision(View v) {
-        //TODO 第一次发送防冲突命令时，串联级别为93。若接收到的UID 以 88 开头，则需要在选卡 命令之后再次发送防冲突命令和选卡命令，
-        // TODO 事先须将串联级别改为 95。依次类推。串联级别 共有三级：93，95，97。详情见ISO14443-3 第 6.4.3.2 节
-//        DeviceStateChangeUtils.getInstence(sPort).onDeviceStateChange(SendByteData.ANTI_COLLISION_14443A);
+        BaseApp.instance().controlLinksilliconCardIntface.conflict(this, (byte) 0x93);
     }
 
     /**
@@ -77,7 +173,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void complexFindCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.composeFindCard();
+        BaseApp.instance().controlLinksilliconCardIntface.composeFindCard(this);
     }
 
     /**
@@ -86,8 +182,8 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void selectCard(View v) {
-        //TODO 串联等级，待确认
-        BaseApp.instance().controlLinksilliconCardIntface.selectCard(147);
+        //串联等级 0x93,0x95,0x97
+        BaseApp.instance().controlLinksilliconCardIntface.selectCard(this, (byte) 0x93);
     }
 
     /**
@@ -96,7 +192,7 @@ public class BasicOperationCardActivity extends AppCompatActivity {
      * @param v
      */
     public void stopCard(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.pauseCard();
+        BaseApp.instance().controlLinksilliconCardIntface.pauseCard(this);
     }
 
 

@@ -28,19 +28,19 @@ public interface ControlLinksilliconCardIntface {
 
     int GetReaderRecvData(byte[] dest);
 
-    boolean findCard();
+    boolean findCard(Context context);
 
-    int wakeUp();
+    int wakeUp(Context context);
 
-    boolean selectCard(int SeriesLevel);
+    boolean selectCard(Context context, byte SeriesLevel);
 
-    boolean conflict(CardInfo cardInfo);
+    boolean conflict(Context context, byte serieslevel);
 
-    boolean getCardInfo(/*CardInfo cardInfo*/);
+    boolean getCardInfo(Context context);
 
     boolean autoFindCard(Context context, boolean bOn);
 
-    boolean buzzerOn(Context context,boolean bOn);
+    boolean buzzerOn(Context context, boolean bOn);
 
     boolean antennaOff(Context context);
 
@@ -48,9 +48,9 @@ public interface ControlLinksilliconCardIntface {
 
     boolean getReaderId(Context context);
 
-    boolean composeFindCard();
+    boolean composeFindCard(Context context);
 
-    boolean pauseCard();
+    boolean pauseCard(Context context);
 
     boolean setBaudRate(Context context, int baud);
 
@@ -60,25 +60,25 @@ public interface ControlLinksilliconCardIntface {
     //M1卡操作相关函数
     boolean SendM1Command(byte[] m1Cmd, int cmdLen);
 
-    boolean checkKey(CardData cardData);
+    boolean checkKey(Context context, CardData cardData);
 
-    boolean readBlock(CardData cardData);
+    boolean readBlock(Context context, CardData cardData);
 
-    boolean writeBlock(CardData cardData);
+    boolean writeBlock(Context context, CardData cardData);
 
-    boolean walletInit(CardData cardData);
+    boolean walletInit(Context context, CardData cardData);
 
-    boolean readWallet(CardData cardData);
+    boolean readWallet(Context context, CardData cardData);
 
-    boolean walletAdd(CardData cardData);
+    boolean walletAdd(Context context, CardData cardData);
 
-    boolean walletDec(CardData cardData);
+    boolean walletDec(Context context, CardData cardData);
 
-    boolean composeRead(CardData cardData);
+    boolean composeRead(Context context, CardData cardData);
 
-    boolean composeWrite(CardData cardData);
+    boolean composeWrite(Context context, CardData cardData);
 
-    boolean modifyKey(ModifyKey modifyKey);
+    boolean modifyKey(Context context, ModifyKey modifyKey);
 
     boolean ModifyControl(int sector, byte[] oldKeyA, byte[] oldKeyB, byte[] newCtrlWord);
 
@@ -88,9 +88,9 @@ public interface ControlLinksilliconCardIntface {
 
 
     //CPU卡相关函数
-    boolean CosActivation();
+    boolean cosActivation(Context context);
 
-    boolean CosDeactive();
+    boolean cosDeactive(Context context);
 
     boolean SendCosCommand(byte[] cosCmd, int cmdLen);
 

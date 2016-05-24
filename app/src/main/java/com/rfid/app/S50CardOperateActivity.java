@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,6 +192,16 @@ public class S50CardOperateActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+            this.finish();
+        }
+    }
+
     /**
      * 密钥验证
      *
@@ -199,7 +210,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50KeyAuthentiation(View v) {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.checkKey(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.checkKey(this, cardData);
     }
 
     /**
@@ -210,7 +221,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50CompositeBlockRead(View v) {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.composeRead(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.composeRead(this, cardData);
     }
 
     /**
@@ -222,7 +233,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr, keyType, key);
-        BaseApp.instance().controlLinksilliconCardIntface.composeWrite(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.composeWrite(this, cardData);
     }
 
     /**
@@ -232,7 +243,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      */
     public void s50ReadBlock(View v) {
         CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readBlock(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.readBlock(this, cardData);
     }
 
 
@@ -244,7 +255,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50WriteBlock(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(this, cardData);
     }
 
     /**
@@ -255,7 +266,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50InitWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletInit(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
     }
 
     /**
@@ -265,7 +276,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
      */
     public void s50ReadWallet(View v) {
         CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readWallet(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.readWallet(this, cardData);
     }
 
     /**
@@ -276,7 +287,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50AddedWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletAdd(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletAdd(this, cardData);
     }
 
     /**
@@ -287,7 +298,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50ImpairmentWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletDec(cardData);
+        BaseApp.instance().controlLinksilliconCardIntface.walletDec(this, cardData);
     }
 
     /**
@@ -312,7 +323,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
         byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(modifyKey);
+        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, modifyKey);
     }
 
     static void show(Context context) {

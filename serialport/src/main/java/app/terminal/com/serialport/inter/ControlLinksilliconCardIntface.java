@@ -1,5 +1,6 @@
 package app.terminal.com.serialport.inter;
 
+import android.content.Context;
 import android.hardware.usb.UsbManager;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public interface ControlLinksilliconCardIntface {
 
     boolean manualCard(/*CardInfo pInfo*/);
 
-    boolean getReaderId();
+    boolean getReaderId(Context context);
 
     boolean composeFindCard();
 

@@ -78,9 +78,14 @@ public class DeviceStateChangeUtils {
 
             };
 
+    public void onDeviceStateChange(byte[] btys, ResponeDataIntface responeDataIntface) {
+        stopIoManager();
+        startIoManager(btys, responeDataIntface);
+    }
+
     public void onDeviceStateChange(byte[] btys) {
         stopIoManager();
-        startIoManager(btys);
+//        startIoManager(btys, responeDataIntface);
     }
 
     private void stopIoManager() {
@@ -91,13 +96,16 @@ public class DeviceStateChangeUtils {
         }
     }
 
-    private void startIoManager(byte[] btys) {
+    private byte[] startIoManager(byte[] btys, ResponeDataIntface responeDataIntface) {
+        final byte[][] bytes = {null};
         if (serialPort != null) {
+
 //            Log.i(TAG, "Starting io manager ..");
-            serialInputOutputManager = new SerialInputOutputManager(serialPort, new ResponeDataIntface() {
+            serialInputOutputManager = new SerialInputOutputManager(serialPort, responeDataIntface /*new ResponeDataIntface() {
                 @Override
                 public void responseData(byte[] data) {
                     Log.i("DeviceStateChangeUtils", "responseData：" + HexDump.toHexString(data));
+                    bytes[0] = data;
                 }
 
                 @Override
@@ -109,9 +117,10 @@ public class DeviceStateChangeUtils {
                 public void onRunError(Exception e) {
                     Log.i("DeviceStateChangeUtils", "onRunError：" + e.toString());
                 }
-            });
+            }*/);
             serialInputOutputManager.writeAsync(btys);
             mExecutor.submit(serialInputOutputManager);
         }
+        return bytes[0];
     }
 }

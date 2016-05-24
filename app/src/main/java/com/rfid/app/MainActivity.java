@@ -1,5 +1,9 @@
 package com.rfid.app;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -13,6 +17,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import app.terminal.com.serialport.inter.BroadcastIntface;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.SerialPortEntity;
 
@@ -25,15 +30,32 @@ public class MainActivity extends AppCompatActivity {
     private Spinner baudRateSpinner;
     private int baudRate;
 
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BroadcastIntface.GETREADERID_BROADCASTRECEIVER)) {
+                byte[] responsedata = intent.getByteArrayExtra("RESPONSEDATA");
+                ((TextView) findViewById(R.id.serial_number)).setText(HexDump.toHexString(responsedata));
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
+        registerBoradcastReceiver();
         init();
 
     }
 
+    private void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+    }
 
     private void init() {
         mDumpTextView = (TextView) findViewById(R.id.consoleText);
@@ -79,12 +101,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void getSerialNumber(View v) {
+
         if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
-            this.finish();
         }
-        BaseApp.instance().controlLinksilliconCardIntface.getReaderId();
+        BaseApp.instance().controlLinksilliconCardIntface.getReaderId(this);
 
     }
 
@@ -97,7 +119,6 @@ public class MainActivity extends AppCompatActivity {
         if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
-            this.finish();
         }
         BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(baudRate);
     }

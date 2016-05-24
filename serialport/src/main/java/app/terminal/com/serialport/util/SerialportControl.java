@@ -1,10 +1,10 @@
 package app.terminal.com.serialport.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
-import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.List;
 import app.terminal.com.serialport.driver.UsbSerialDriver;
 import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.driver.UsbSerialProber;
+import app.terminal.com.serialport.inter.BroadcastIntface;
 import app.terminal.com.serialport.inter.ControlLinksilliconCardIntface;
 import app.terminal.com.serialport.inter.ResponeDataIntface;
 
@@ -133,12 +134,18 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean getReaderId() {
+    public boolean getReaderId(final Context context) {
+        final boolean[] result = {false};
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
-        /*stateChangeUtils.setResponeDataIntface(new ResponeDataIntface() {
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
             @Override
             public void responseData(byte[] data) {
                 Log.i("SerialportControl", "responseData：" + HexDump.toHexString(data));
+                Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+                mIntent.putExtra("RESPONSEDATA", data);
+
+                //发送广播
+                context.sendBroadcast(mIntent);
             }
 
             @Override
@@ -150,8 +157,8 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             public void onRunError(Exception e) {
 
             }
-        });*/
-        stateChangeUtils.onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE);
+        };
+        stateChangeUtils.onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE, responeDataIntface);
 
         return false;
     }
@@ -194,8 +201,25 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 baudRate[8] = 0x07;
                 break;
         }
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            @Override
+            public void responseData(byte[] data) {
+                Log.i("SerialportControl", "responseDatasetBaudRate：" + HexDump.toHexString(data));
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i("SerialportControl", "sendDatasetBaudRate：" + HexDump.toHexString(data));
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+
+            }
+        };
         baudRate[9] = CheckSum(baudRate, 9);
-        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(baudRate);
+        DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(baudRate, responeDataIntface);
         return true;
     }
 

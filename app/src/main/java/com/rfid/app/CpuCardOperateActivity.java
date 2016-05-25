@@ -43,7 +43,7 @@ public class CpuCardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void cosStop(View v) {
-        BaseApp.instance().controlLinksilliconCardIntface.cosActivation(this);
+        BaseApp.instance().controlLinksilliconCardIntface.cosDeactive(this);
     }
 
     /**

@@ -1,8 +1,11 @@
 package com.rfid.app;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
@@ -19,14 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.inter.BroadcastIntface;
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardType;
+import app.terminal.com.serialport.util.CreateControl;
 import app.terminal.com.serialport.util.FindAddrType;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.KeyType;
 import app.terminal.com.serialport.util.ModifyKey;
 
 public class S50CardOperateActivity extends AppCompatActivity {
+    private static final int MODIFYCTRLCHECKA = 26;
+    private static final int MODIFYCTRLCHECKB = 27;
 
     private EditText privateKeyEt;
     private EditText blockDataEt;
@@ -61,6 +68,48 @@ public class S50CardOperateActivity extends AppCompatActivity {
     private int findAddrType = FindAddrType.ABSOLUTE_ADDR;
     private int keyType = KeyType.KEY_A;
     private byte selectSector = 0;
+    private ModifyKey modifyControlModifyKey;
+    private int count = 0;
+    private BroadcastReceiver checkKeyBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if (action.equals(BroadcastIntface.CHECKCTRLKEY_BROADCASTRECEIVER)) {
+                if (count == 0) {
+                    BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(S50CardOperateActivity.this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), MODIFYCTRLCHECKB);
+                    count++;
+                } else {
+                    BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(S50CardOperateActivity.this, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey());
+                    count = 0;
+                }
+            }
+        }
+    };
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BroadcastIntface.GETCONTROL_BROADCASTRECEIVER)) {
+
+                byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
+                byte[] sendData = intent.getByteArrayExtra("SENDDATA");
+                byte[] controlWord = HexDump.hexStringToByteArray(CreateControl.getInstance().getNewctrl());
+                BaseApp.instance().controlLinksilliconCardIntface.modifyControl(S50CardOperateActivity.this, modifyControlModifyKey, controlWord, respondents);
+                Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+                mIntent.putExtra("SENDDATA", sendData);
+                mIntent.putExtra("RESPONSEDATA", respondents);
+                sendBroadcast(mIntent);
+
+                Intent intent1 = new Intent(BroadcastIntface.GETCURRENTCTRLKEY_BROADCASTRECEIVER);
+                intent1.putExtra("SENDDATA", sendData);
+                intent1.putExtra("RESPONSEDATA", respondents);
+                sendBroadcast(intent1);
+
+
+            }
+        }
+    };
 
 
     @Override
@@ -73,8 +122,23 @@ public class S50CardOperateActivity extends AppCompatActivity {
         p.height = (int) (d.getHeight() * 0.8); // 高度设置为屏幕的0.8
         p.width = (int) (d.getWidth() * 0.8); // 宽度设置为屏幕的0.7
         getWindow().setAttributes(p);
+        registerBoradcastReceiver();
         findViews();
         initData();
+
+    }
+
+    private void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction(BroadcastIntface.GETCONTROL_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BroadcastIntface.CHECKCTRLKEY_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(checkKeyBroadcastReceiver, intentFilter);
+
     }
 
     private void initData() {
@@ -307,8 +371,19 @@ public class S50CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s50ModifyControlWord(View v) {
-        ModifyControlActivity.show(this);
-        //TODO 暂时不写
+        byte[] aOldKey = HexDump.hexStringToByteArray(aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bOldKey = HexDump.hexStringToByteArray(bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        modifyControlModifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
+        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+            Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
+            ModifyControlActivity.show(this, modifyControlModifyKey);
+            return;
+        } else {
+            BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, true, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), MODIFYCTRLCHECKA);
+
+        }
 
     }
 

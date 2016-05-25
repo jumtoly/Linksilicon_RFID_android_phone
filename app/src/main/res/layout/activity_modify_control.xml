@@ -394,12 +394,13 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <Spinner
+                            <TextView
                                 android:id="@+id/modify_control_3A_read"
+                                android:text="Never"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
-                                android:gravity="center_vertical" />
+                                android:gravity="center" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -469,12 +470,13 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <Spinner
+                            <TextView
+                                android:text="KeyA|B"
                                 android:id="@+id/modify_control_3ctrl_read"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
-                                android:gravity="center_vertical" />
+                                android:gravity="center" />
                         </LinearLayout>
                     </LinearLayout>
 

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardInfo;
+import app.terminal.com.serialport.util.CreateControl;
 import app.terminal.com.serialport.util.ModifyKey;
 
 /**
@@ -80,11 +81,11 @@ public interface ControlLinksilliconCardIntface {
 
     boolean modifyKey(Context context, ModifyKey modifyKey);
 
-    boolean ModifyControl(int sector, byte[] oldKeyA, byte[] oldKeyB, byte[] newCtrlWord);
+    boolean modifyControl(Context context, ModifyKey modifyKey, byte[] controlWord, byte[] oldControlWord);
 
-    boolean ReadCtrlWord(int sector, byte[] key, byte[] data);
+    boolean readCtrlWord(Context context, int sector, byte[] key);
 
-    boolean CheckCtrlKey(boolean aORb, int block, byte[] key, int order);
+    boolean checkCtrlKey(Context context, boolean aORb, int block, byte[] key, int order);
 
 
     //CPU卡相关函数
@@ -94,5 +95,5 @@ public interface ControlLinksilliconCardIntface {
 
     boolean sendCosCommand(Context context, byte[] cosCmd);
 
-    boolean exauthentication(Context context,byte[] key,byte[] keyFlag);
+    boolean exauthentication(Context context, byte[] key, byte[] keyFlag);
 }

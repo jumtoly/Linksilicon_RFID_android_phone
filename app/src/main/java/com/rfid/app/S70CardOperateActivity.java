@@ -298,7 +298,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70ModifyControlWord(View v) {
-        ModifyControlActivity.show(this);
+//        ModifyControlActivity.show(this);
         //TODO 暂时不写
 
     }

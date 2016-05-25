@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.IOException;
@@ -1128,18 +1129,183 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
           return false;
       }*/
     @Override
-    public boolean ModifyControl(int sector, byte[] oldKeyA, byte[] oldKeyB, byte[] newCtrlWord) {
-        return false;
+    public boolean modifyControl(final Context context, ModifyKey modifyKey, byte[] controlWord, byte[] oldControlWord) {
+        byte[] modify = new byte[36];
+        modify[0] = 0x55;
+        modify[1] = 0x55;
+        modify[5] = 0x1e;
+        modify[6] = 0x03;
+        modify[7] = 0x07;
+        modify[8] = 0x01;
+        modify[10] = (byte) modifyKey.getSector();
+        if (modifyKey.getSector() >= 32) {
+            modify[11] = 15;
+        } else {
+            modify[11] = 3;
+        }
+        byte[] order = new byte[2];
+        byte ctrl = 0;
+        order[0] = oldControlWord[1];
+        order[1] = oldControlWord[2];
+        if ((order[0] & 0x80) >= 1)
+            ctrl += 4;
+        if ((order[1] & 0x08) >= 1)
+            ctrl += 2;
+        if ((order[1] & 0x80) >= 1)
+            ctrl += 1;    //获取旧控制字并分析
+        if (ctrl == 1) {
+            modify[12] = 0x60;    //用密钥A写数据
+            for (int i = 0; i < 6; i++) {
+                modify[i + 13] = modifyKey.getaOldKey()[i];
+            }
+        } else if ((ctrl == 3) || (ctrl == 5)) {
+            modify[12] = 0x61;    //用密钥B写数据
+            for (int i = 0; i < 6; i++) {
+                modify[i + 13] = modifyKey.getbOldKey()[i];
+            }
+        }
+        for (int i = 0; i < 6; i++) {
+            modify[i + 19] = modifyKey.getbOldKey()[i];
+        }
+        for (int i = 0; i < 4; i++) {
+            modify[i + 25] = controlWord[i];
+        }
+        for (int i = 0; i < 6; i++) {
+            modify[i + 29] = modifyKey.getbOldKey()[i];
+        }
+        modify[35] = CheckSum(modify, 36);
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(modify, responeDataIntface);
+        return true;
     }
 
     @Override
-    public boolean ReadCtrlWord(int sector, byte[] key, byte[] data) {
-        return false;
+    public boolean readCtrlWord(final Context context, int sector, byte[] key) {
+        byte[] readctrl = new byte[20];
+        readctrl[0] = 0x55;
+        readctrl[1] = 0x55;
+        readctrl[5] = 0x0e;
+        readctrl[6] = 0x03;
+        readctrl[7] = 0x07;
+        readctrl[10] = (byte) sector;
+        if (sector >= 32) {
+            readctrl[11] = 15;
+        } else {
+            readctrl[11] = 3;
+        }
+        if (key == null || key.length <= 0) {
+            return false;
+        } else {
+
+            readctrl[12] = 0x60;
+        }
+        for (int i = 13, j = 0; i < 19; i++, j++) {
+            readctrl[i] = key[j];
+        }
+        readctrl[19] = CheckSum(readctrl, 20);
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETCONTROL_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(readctrl, responeDataIntface);
+        return true;
     }
 
     @Override
-    public boolean CheckCtrlKey(boolean aORb, int block, byte[] key, int order) {
-        return false;
+    public boolean checkCtrlKey(final Context context, boolean aORb, int block, byte[] key, int order) {
+        byte[] checkKey = new byte[19];
+        checkKey[0] = 0x55;
+        checkKey[1] = 0x55;
+        checkKey[5] = 0x0d;
+        checkKey[6] = 0x03;
+        checkKey[7] = 0x01;
+        checkKey[9] = (byte) block;
+        if (block >= 32) {
+            checkKey[10] = 15;
+        } else {
+            checkKey[10] = 3;
+        }
+
+        if (aORb) {
+            checkKey[11] = 0x60;
+        } else {
+            checkKey[11] = 0x61;
+        }
+
+        for (int i = 12, j = 0; i < 18; i++, j++) {
+            checkKey[i] = key[j];
+        }
+
+        checkKey[18] = CheckSum(checkKey, 19);
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.CHECKCTRLKEY_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(checkKey, responeDataIntface);
+        return true;
     }
 
     @Override

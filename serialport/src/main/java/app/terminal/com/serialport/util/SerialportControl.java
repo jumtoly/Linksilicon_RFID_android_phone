@@ -1036,23 +1036,18 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean modifyKey(Context context, ModifyKey modifyKey) {
-       /* byte[] keyModify = SendByteData.KEY_MODIFY;
+    public boolean modifyKey(final Context context, int sector, int keyType, byte[] newKey, byte[] oldKeyA, byte[] oldKeyB) {
+        byte[] modifykey = SendByteData.KEY_MODIFY;
 
 
-        if (false == checkCtrlKey(true, modifyKey.getSector(), modifyKey.getaOldKey()*//*, MODIFYKEYCHECKA*//*))
+        if (false == checkCtrlKey(context, true, sector, oldKeyA, 26)) {
             return false;
+        }
         SystemClock.sleep(50);
-        if (false == CheckCtrlKey(false, modifyKey.getSector(), modifyKey.getbOldKey()*//*, MODIFYKEYCHECKB*//*))
+        if (false == checkCtrlKey(context, false, sector, oldKeyB, 27)) {
             return false;
-        SystemClock.sleep(50);
-
-       bRet = ReadCtrlWord(sector, old_key_a, ctrl_word);
-        if (bRet == FALSE)
-            return FALSE;
-        Sleep(50);
-        modifykey[10] = sector;
-        memset(recvbuf, 0, sizeof(recvbuf));
+        }
+        modifykey[10] = (byte) sector;
 
         if (sector >= 32) {
             modifykey[11] = 15;
@@ -1061,73 +1056,75 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         }
 
         //str.format("%s", (char*)iParam);
-        BYTE order[ 2];
-        BYTE ctrl = 0;
+        byte[] order = new byte[2];
+        byte ctrl = 0;
         for (int i = 0; i < 2; i++) {
-            order[i] = ctrl_word[i + 1];
+            order[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[i + 1];
         }
 
-        if (key_type == KEY_A) {
+        if (keyType == 0) {
             modifykey[12] = 0x60;    //用密钥A写数据
             for (int i = 13, j = 0; i < 19; i++, j++) {
-                modifykey[i] = old_key_a[j];
-                modifykey[i + 6] = new_key[j];
+                modifykey[i] = oldKeyA[j];
+                modifykey[i + 6] = newKey[j];
             }
 
             for (int i = 25, j = 0; i < 29; i++, j++) {
-                modifykey[i] = ctrl_word[j];            //4位控制字写入
+                modifykey[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
             }
 
             for (int i = 29, j = 0; i < 35; i++, j++) {
-                modifykey[i] = old_key_b[j];
+                modifykey[i] = oldKeyB[j];
             }
-        } else if (key_type == KEY_B) {
+        } else if (keyType == 1) {
             modifykey[12] = 0x61;    //用密钥B写数据
 
             for (int i = 13, j = 0; i < 19; i++, j++) {
-                modifykey[i] = old_key_b[j];
-                modifykey[i + 6] = old_key_a[j];
+                modifykey[i] = oldKeyB[j];
+                modifykey[i + 6] = oldKeyA[j];
             }
 
             for (int i = 25, j = 0; i < 29; i++, j++) {
-                modifykey[i] = ctrl_word[j];            //4位控制字写入
+                modifykey[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
             }
 
             for (int i = 29, j = 0; i < 35; i++, j++) {
-                modifykey[i] = new_key[j];
+                modifykey[i] = newKey[j];
             }
         }
 
 
-        modifykey[35] = CheckSum(modifykey, 36);*/
+        modifykey[35] = CheckSum(modifykey, 36);
+
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        stateChangeUtils.onDeviceStateChange(modifykey, responeDataIntface);
         return true;
     }
 
 
-    /*  private boolean checkCtrlKey(boolean AorB, int block, byte[] key) {
-
-          byte checkkey[] = SendByteData.CHECK_CTRL_KEY;
-          checkkey[9] = (byte) block;
-          if (block >= 32) {
-              checkkey[10] = 15;
-          } else {
-              checkkey[10] = 3;
-          }
-
-          if (AorB) {
-              checkkey[11] = 0x60;
-          } else {
-              checkkey[11] = 0x61;
-          }
-
-          for (int i = 12, j = 0; i < 18; i++, j++) {
-              checkkey[i] = key[j];
-          }
-
-          checkkey[18] = CheckSum(checkkey, 19);
-          DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort()).onDeviceStateChange(checkkey);
-          return false;
-      }*/
     @Override
     public boolean modifyControl(final Context context, ModifyKey modifyKey, byte[] controlWord, byte[] oldControlWord) {
         byte[] modify = new byte[36];
@@ -1203,7 +1200,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean readCtrlWord(final Context context, int sector, byte[] key) {
+    public boolean readCtrlWord(final Context context, int sector, byte[] key, final boolean isModifyControl) {
         byte[] readctrl = new byte[20];
         readctrl[0] = 0x55;
         readctrl[1] = 0x55;
@@ -1234,6 +1231,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             public void responseData(byte[] data) {
                 Log.i(TAG, "responseData：" + HexDump.toHexString(data));
                 mIntent.putExtra("RESPONSEDATA", data);
+                mIntent.putExtra("ISREADCTRLWORD", isModifyControl);
                 context.sendBroadcast(mIntent);
 
             }

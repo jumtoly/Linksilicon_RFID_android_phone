@@ -80,7 +80,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
                     BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(S50CardOperateActivity.this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), MODIFYCTRLCHECKB);
                     count++;
                 } else {
-                    BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(S50CardOperateActivity.this, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey());
+                    BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(S50CardOperateActivity.this, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), false);
                     count = 0;
                 }
             }
@@ -94,8 +94,10 @@ public class S50CardOperateActivity extends AppCompatActivity {
 
                 byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
                 byte[] sendData = intent.getByteArrayExtra("SENDDATA");
-                byte[] controlWord = HexDump.hexStringToByteArray(CreateControl.getInstance().getNewctrl());
-                BaseApp.instance().controlLinksilliconCardIntface.modifyControl(S50CardOperateActivity.this, modifyControlModifyKey, controlWord, respondents);
+                if (!intent.getBooleanExtra("ISREADCTRLWORD", false)) {
+                    byte[] controlWord = HexDump.hexStringToByteArray(CreateControl.getInstance().getNewctrl());
+                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(S50CardOperateActivity.this, modifyControlModifyKey, controlWord, respondents);
+                }
                 Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
                 mIntent.putExtra("SENDDATA", sendData);
                 mIntent.putExtra("RESPONSEDATA", respondents);
@@ -398,7 +400,11 @@ public class S50CardOperateActivity extends AppCompatActivity {
         byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, modifyKey);
+//        BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(S50CardOperateActivity.this, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), false);
+//        SystemClock.sleep(200);
+        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey);
+        SystemClock.sleep(200);
+        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey);
     }
 
     static void show(Context context) {

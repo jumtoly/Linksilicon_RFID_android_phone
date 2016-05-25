@@ -18,11 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import app.terminal.com.serialport.inter.BroadcastIntface;
+import app.terminal.com.serialport.util.CheckResponeData;
+import app.terminal.com.serialport.util.CreateControl;
+import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.ModifyKey;
 
 public class ModifyControlActivity extends AppCompatActivity {
     private static ModifyKey modifyKey;
-    private String[] spinnerList = {"KeyA", "KeyB", "KeyA|KeyB", "Never"};
+    private String[] spinnerList = {"KeyA", "KeyB", "KeyA|B", "Never"};
     private ArrayAdapter<String> spinnerAdapter;
     private Spinner modify0Read;
     private Spinner modify1Read;
@@ -42,7 +45,7 @@ public class ModifyControlActivity extends AppCompatActivity {
     private Spinner modify2Dec;
     private TextView ctrlWordInfo;
     private TextView currentCtrlWord;
-    private String ctrlWordInfoStr;
+    private StringBuffer ctrlWordInfoStr = new StringBuffer();
     private String currentCtrlWordStr;
 
     private String read3B;
@@ -61,12 +64,17 @@ public class ModifyControlActivity extends AppCompatActivity {
             String strCurrectCtrl = "";
             byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
             byte[] sendData = intent.getByteArrayExtra("SENDDATA");
-            for (int i = 0; i < 4; i++) {
-                String s = String.format("%02X", respondents[i]);
-                strCurrectCtrl += s;
+            if (CheckResponeData.isOk(respondents)) {
+                for (int i = 0; i < 4; i++) {
+                    String s = String.format("%02X", respondents[i]);
+                    strCurrectCtrl += s;
+                }
+                setControl(respondents);
+                currentCtrlWord.setText(strCurrectCtrl);
+            } else {
+                currentCtrlWord.setText("00 00 00 00");
             }
-            setControl(respondents);
-            currentCtrlWord.setText(strCurrectCtrl);
+
         }
     };
 
@@ -74,8 +82,10 @@ public class ModifyControlActivity extends AppCompatActivity {
 
         byte[] order = new byte[2];
         byte[] blockorder = new byte[4];
-        order[0] = data[14];
-        order[1] = data[15];
+        if (data.length >= 15) {
+            order[0] = data[14];
+            order[1] = data[15];
+        }
         if ((order[0] & 0x10) >= 1)
             blockorder[0] += 4;
         if ((order[1] & 0x01) >= 1)
@@ -358,6 +368,13 @@ public class ModifyControlActivity extends AppCompatActivity {
                 break;
             }
         }
+        StringBuffer stemp = new StringBuffer();
+        for (int i = 13; i < 17; i++) {
+            String s = String.format("%02X ", data[i]);
+            stemp.append(s);
+        }
+        currentCtrlWord.setText(stemp.toString());
+
     }
 
 
@@ -675,10 +692,10 @@ public class ModifyControlActivity extends AppCompatActivity {
         str[0] = (byte) ((((~str[1]) >> 4) & 0x0f) + (((~str[2]) << 4) & 0xf0));
         for (int i = 0; i < 4; i++) {
             String s = String.format("%02X", str[i]);
-            ctrlWordInfoStr += s;
+            ctrlWordInfoStr.append(s);
         }
 
-        ctrlWordInfo.setText(ctrlWordInfoStr);
+        ctrlWordInfo.setText(ctrlWordInfoStr.toString());
     }
 
     /**
@@ -687,7 +704,9 @@ public class ModifyControlActivity extends AppCompatActivity {
      * @param v
      */
     public void okModify(View v) {
-
+        CreateControl.getInstance().setOldctrl(currentCtrlWord.getText().toString().trim());
+        CreateControl.getInstance().setNewctrl(ctrlWordInfo.getText().toString().trim());
+        finish();
     }
 
     /**
@@ -696,11 +715,11 @@ public class ModifyControlActivity extends AppCompatActivity {
      * @param v
      */
     public void cnacelModify(View v) {
-
+        finish();
     }
 
     public void getCurrentCtrlWord() {
-        BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey());
+        BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey(), true);
     }
 
     private class ModifyArrayAdapter extends ArrayAdapter<String> {

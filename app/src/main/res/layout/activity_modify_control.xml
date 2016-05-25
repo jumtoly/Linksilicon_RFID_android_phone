@@ -396,11 +396,11 @@
 
                             <TextView
                                 android:id="@+id/modify_control_3A_read"
-                                android:text="Never"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
-                                android:gravity="center" />
+                                android:gravity="center"
+                                android:text="Never" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -471,12 +471,12 @@
                             android:orientation="horizontal">
 
                             <TextView
-                                android:text="KeyA|B"
                                 android:id="@+id/modify_control_3ctrl_read"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_vertical"
-                                android:gravity="center" />
+                                android:gravity="center"
+                                android:text="KeyA|B" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -602,6 +602,7 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/textview_line_box"
+                        android:gravity="center_vertical"
                         android:textSize="14sp" />
 
 
@@ -629,6 +630,7 @@
                         android:layout_height="30dp"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/textview_line_box"
+                        android:gravity="center_vertical"
                         android:textSize="14sp" />
 
 

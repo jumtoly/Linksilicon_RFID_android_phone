@@ -42,12 +42,12 @@
 
 
         <EditText
+            android:id="@+id/cos_cmd_et"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginTop="3dp"
             android:background="@drawable/textview_line_box"
             android:gravity="left"
-            android:text="asdfk"
             android:textSize="12sp" />
 
         <Button
@@ -74,11 +74,13 @@
                 android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/cos_key_et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="3"
                 android:background="@drawable/edit_line_box_white"
+                android:textColor="@android:color/black"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -98,11 +100,13 @@
                 android:textSize="16sp" />
 
             <EditText
+                android:id="@+id/cos_key_logo_et"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="3"
                 android:background="@drawable/edit_line_box_white"
+                android:textColor="@android:color/black"
                 android:textSize="12sp" />
 
             <Button

@@ -92,7 +92,7 @@ public interface ControlLinksilliconCardIntface {
 
     boolean cosDeactive(Context context);
 
-    boolean SendCosCommand(byte[] cosCmd, int cmdLen);
+    boolean sendCosCommand(Context context, byte[] cosCmd);
 
-    boolean Exauthentication(byte[] key, int keyLen, byte keyFlag);
+    boolean exauthentication(Context context,byte[] key,byte[] keyFlag);
 }

@@ -7,8 +7,11 @@ import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import app.terminal.com.serialport.driver.UsbSerialPort;
+import app.terminal.com.serialport.util.HexDump;
 
 public class CpuCardOperateActivity extends AppCompatActivity {
 
@@ -49,7 +52,13 @@ public class CpuCardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void sendCmd(View v) {
-
+        EditText cmd = (EditText) findViewById(R.id.cos_cmd_et);
+        if (cmd.getText().toString().trim().length() % 2 != 0) {
+            Toast.makeText(this, "请输入正确的COS命令", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte[] cmdByte = HexDump.hexStringToByteArray(cmd.getText().toString().trim());
+        BaseApp.instance().controlLinksilliconCardIntface.sendCosCommand(this, cmdByte);
     }
 
     /**
@@ -58,6 +67,15 @@ public class CpuCardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void compoundExtAuth(View v) {
+        EditText ketEt = (EditText) findViewById(R.id.cos_key_et);
+        EditText ketLogoEt = (EditText) findViewById(R.id.cos_key_logo_et);
+        if (ketEt.getText().toString().length() % 2 != 0 || ketLogoEt.getText().toString().trim().length() % 2 != 0) {
+            Toast.makeText(this, "请输入正确的密钥或密钥标识号", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte[] ketByte = HexDump.hexStringToByteArray(ketEt.getText().toString().trim());
+        byte[] ketLogoByte = HexDump.hexStringToByteArray(ketLogoEt.getText().toString().trim());
+        BaseApp.instance().controlLinksilliconCardIntface.exauthentication(this, ketByte, ketLogoByte);
 
     }
 

@@ -1203,13 +1203,105 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean SendCosCommand(byte[] cosCmd, int cmdLen) {
-        return false;
+    public boolean sendCosCommand(final Context context, byte[] cosCmd) {
+        byte[] sendcommand = new byte[256];
+        sendcommand[0] = 0x55;
+        sendcommand[1] = 0x55;
+        sendcommand[6] = 0x07;
+        sendcommand[7] = 0x03;
+        if (cosCmd == null || cosCmd.length < 0) {
+            return false;
+        } else if (cosCmd.length >= 90) {
+            return false;
+        }
+        sendcommand[5] = (byte) (cosCmd.length + 3);
+        sendcommand[8 + cosCmd.length] = CheckSum(sendcommand, 9 + cosCmd.length);
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        byte[] sendCmd = new byte[8 + cosCmd.length + 1];
+        for (int i = 0; i < sendCmd.length; i++) {
+            sendCmd[i] = sendcommand[i];
+        }
+        stateChangeUtils.onDeviceStateChange(sendCmd, responeDataIntface);
+        return true;
     }
 
     @Override
-    public boolean Exauthentication(byte[] key, int keyLen, byte keyFlag) {
-        return false;
+    public boolean exauthentication(final Context context, byte[] key, byte[] keyFlag) {
+        byte[] ex = new byte[27];
+        ex[0] = 0x55;
+        ex[1] = 0x55;
+        ex[5] = 0x13;
+        ex[6] = 0x07;
+        ex[7] = 0x04;
+        ex[8] = 0x08;
+        ex[10] = (byte) 0xff;
+        ex[11] = (byte) 0xff;
+        ex[12] = (byte) 0xff;
+        ex[13] = (byte) 0xff;
+        ex[14] = (byte) 0xff;
+        ex[15] = (byte) 0xff;
+        ex[16] = (byte) 0xff;
+        ex[17] = (byte) 0xff;
+        ex[18] = 0x06;
+        if (key != null && key.length > 0) {
+            ex[9] = (byte) key.length;
+            ex[5] = (byte) (5 + ex[8]);
+            ex[((int) ex[5]) + 5] = CheckSum(ex, ((int) ex[5]) + 6);
+
+        }
+        DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
+        ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
+            Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+
+            @Override
+            public void responseData(byte[] data) {
+                Log.i(TAG, "responseData：" + HexDump.toHexString(data));
+                mIntent.putExtra("RESPONSEDATA", data);
+                context.sendBroadcast(mIntent);
+
+            }
+
+            @Override
+            public void sendData(byte[] data) {
+                Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("SENDDATA", data);
+            }
+
+            @Override
+            public void onRunError(Exception e) {
+                Log.i(TAG, "onRunError：" + e.toString());
+            }
+
+        };
+        byte[] exeCmd = new byte[((int) ex[5]) + 5 + 1];
+        for (int i = 0; i < exeCmd.length; i++) {
+            exeCmd[i] = ex[i];
+        }
+        stateChangeUtils.onDeviceStateChange(exeCmd, responeDataIntface);
+        return true;
     }
 
     @Override

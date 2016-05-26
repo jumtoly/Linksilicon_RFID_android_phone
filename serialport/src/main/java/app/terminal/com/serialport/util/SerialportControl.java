@@ -130,9 +130,8 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
     @Override
     public boolean selectCard(final Context context, byte seriesLevel) {
-        byte[] selectcard = SendByteData.COMPOSITE_DETECTING_CARD_14443A;
+        byte[] selectcard = SendByteData.SELECT_CARD_14443A;
         selectcard[8] = seriesLevel;
-        selectcard[9] = CheckSum(selectcard, 10);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
             Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);

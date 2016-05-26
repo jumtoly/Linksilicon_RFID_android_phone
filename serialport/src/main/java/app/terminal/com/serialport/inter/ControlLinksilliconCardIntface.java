@@ -83,7 +83,7 @@ public interface ControlLinksilliconCardIntface {
 
     boolean modifyControl(Context context, ModifyKey modifyKey, byte[] controlWord, byte[] oldControlWord);
 
-    boolean readCtrlWord(Context context, int sector, byte[] key, boolean isModifyControl);
+    boolean readCtrlWord(Context context, int sector, byte[] key);
 
     boolean checkCtrlKey(Context context, boolean aORb, int block, byte[] key, int order);
 

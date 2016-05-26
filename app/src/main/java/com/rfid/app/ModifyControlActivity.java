@@ -58,25 +58,6 @@ public class ModifyControlActivity extends AppCompatActivity {
     private String[] write = new String[3];
     private String[] add = new String[3];
     private String[] dec = new String[3];
-    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String strCurrectCtrl = "";
-            byte[] respondents = intent.getByteArrayExtra("RESPONSEDATA");
-            byte[] sendData = intent.getByteArrayExtra("SENDDATA");
-            if (CheckResponeData.isOk(respondents)) {
-                for (int i = 0; i < 4; i++) {
-                    String s = String.format("%02X", respondents[i]);
-                    strCurrectCtrl += s;
-                }
-                setControl(respondents);
-                currentCtrlWord.setText(strCurrectCtrl);
-            } else {
-                currentCtrlWord.setText("00 00 00 00");
-            }
-
-        }
-    };
 
     private void setControl(byte[] data) {
 
@@ -388,19 +369,11 @@ public class ModifyControlActivity extends AppCompatActivity {
         p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.8
         p.width = (int) (d.getWidth() * 0.9); // 宽度设置为屏幕的0.7
         getWindow().setAttributes(p);
-        registerBoradcastReceiver();
         findViews();
         initView();
         getCurrentCtrlWord();
     }
 
-    private void registerBoradcastReceiver() {
-        IntentFilter myIntentFilter = new IntentFilter();
-        myIntentFilter.addAction(BroadcastIntface.GETCURRENTCTRLKEY_BROADCASTRECEIVER);
-        //注册广播
-        registerReceiver(broadcastReceiver, myIntentFilter);
-
-    }
 
     private void initView() {
 
@@ -719,7 +692,10 @@ public class ModifyControlActivity extends AppCompatActivity {
     }
 
     public void getCurrentCtrlWord() {
-        BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey(), true);
+        if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
+            currentCtrlWord.setText(CreateControl.getInstance().getOldctrl());
+            setControl(HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl()));
+        }
     }
 
     private class ModifyArrayAdapter extends ArrayAdapter<String> {

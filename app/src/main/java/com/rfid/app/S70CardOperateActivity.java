@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import java.util.List;
 import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardType;
+import app.terminal.com.serialport.util.CreateControl;
 import app.terminal.com.serialport.util.FindAddrType;
 import app.terminal.com.serialport.util.HexDump;
 import app.terminal.com.serialport.util.KeyType;
@@ -299,9 +301,28 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70ModifyControlWord(View v) {
-//        ModifyControlActivity.show(this);
-        //TODO 暂时不写
+        byte[] aOldKey = HexDump.hexStringToByteArray(aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bOldKey = HexDump.hexStringToByteArray(bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        ModifyKey modifyControlModifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
+        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+            Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
+            ModifyControlActivity.show(this, modifyControlModifyKey);
+            return;
+        } else {
+            if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, true, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), 26)) {//密钥A校验
+                if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), 27)) {//密钥B校验
+                    byte[] controlWord = HexDump.hexStringToByteArray(CreateControl.getInstance().getNewctrl());
+                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this, modifyControlModifyKey, controlWord, HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl()));
+                } else {
+                    Toast.makeText(this, "密钥B验证失败", Toast.LENGTH_SHORT).show();
+                }
 
+            } else {
+                Toast.makeText(this, "密钥A验证失败", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     /**
@@ -315,9 +336,17 @@ public class S70CardOperateActivity extends AppCompatActivity {
         byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
         ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey);
-        SystemClock.sleep(200);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey);
+        if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
+            if (BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey)) {
+                if (!BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey)) {
+                    Toast.makeText(this, "密钥B修改失败", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "密钥A修改失败", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "读取控件字失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
     static void show(Context context) {

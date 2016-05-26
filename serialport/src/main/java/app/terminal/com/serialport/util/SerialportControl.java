@@ -975,9 +975,9 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         final boolean[] isOK = new boolean[1];
         byte[] compositeWriteBlockM1 = SendByteData.COMPOSITE_WRITE_BLOCK_M1;
         if (cardData.getFindAddrType() == FindAddrType.ABSOLUTE_ADDR) {
-            compositeWriteBlockM1[8] = 1;
-            compositeWriteBlockM1[9] = 0;
-            compositeWriteBlockM1[10] = cardData.getBlockAddr();
+            compositeWriteBlockM1[9] = 1;
+            compositeWriteBlockM1[10] = 0;
+            compositeWriteBlockM1[11] = cardData.getBlockAddr();
         } else {
             if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
                 //块地址设置错误
@@ -986,9 +986,9 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 //块地址设置错误
                 return isOK[0] = false;
             }
-            compositeWriteBlockM1[8] = 0;
-            compositeWriteBlockM1[9] = cardData.getSectorAddr();
-            compositeWriteBlockM1[10] = cardData.getBlockAddr();
+            compositeWriteBlockM1[9] = 0;
+            compositeWriteBlockM1[10] = cardData.getSectorAddr();
+            compositeWriteBlockM1[11] = cardData.getBlockAddr();
         }
         if (cardData.getKeyType() == KeyType.KEY_A) {
             compositeWriteBlockM1[12] = 0x60;

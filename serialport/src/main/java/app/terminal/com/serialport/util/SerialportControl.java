@@ -926,14 +926,14 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 //块地址设置错误
                 return isOK[0] = false;
             }
-            compositeReadBlockm1[8] = 0;
-            compositeReadBlockm1[9] = cardData.getSectorAddr();
-            compositeReadBlockm1[10] = cardData.getBlockAddr();
+            compositeReadBlockm1[9] = 0;
+            compositeReadBlockm1[10] = cardData.getSectorAddr();
+            compositeReadBlockm1[11] = cardData.getBlockAddr();
         }
         if (cardData.getKeyType() == KeyType.KEY_A) {
-            compositeReadBlockm1[11] = 0x60;
+            compositeReadBlockm1[12] = 0x60;
         } else if (cardData.getKeyType() == KeyType.KEY_B) {
-            compositeReadBlockm1[11] = 0x61;
+            compositeReadBlockm1[12] = 0x61;
         }
         for (int i = 13, j = 0; i < 19; i++, j++) {
             compositeReadBlockm1[i] = cardData.getKey()[j];

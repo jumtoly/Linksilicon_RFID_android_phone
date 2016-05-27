@@ -248,7 +248,12 @@ public class S50CardOperateActivity extends AppCompatActivity {
      */
     public void s50ReadBlock(View v) {
         CardData cardData = new CardData(CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readBlock(this, cardData);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.readBlock(this, cardData)) {
+            Toast.makeText(this, "读块成功！", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "读块失败！", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
 
@@ -260,7 +265,13 @@ public class S50CardOperateActivity extends AppCompatActivity {
     public void s50WriteBlock(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.writeBlock(this, cardData);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.writeBlock(this, cardData)) {
+            Toast.makeText(this, "写块成功！", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "写块失败！", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     /**

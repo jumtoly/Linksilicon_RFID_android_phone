@@ -25,9 +25,6 @@ public interface ControlLinksilliconCardIntface {
 
     boolean isReaderOpen();
 
-    int GetReaderSendCmd(byte[] dest);
-
-    int GetReaderRecvData(byte[] dest);
 
     boolean findCard(Context context);
 
@@ -55,11 +52,9 @@ public interface ControlLinksilliconCardIntface {
 
     boolean setBaudRate(Context context, int baud);
 
-    boolean ReadReaderRegs(int Addr, byte RegNum, byte[] Dest);
 
 
     //M1卡操作相关函数
-    boolean SendM1Command(byte[] m1Cmd, int cmdLen);
 
     boolean checkKey(Context context, CardData cardData);
 

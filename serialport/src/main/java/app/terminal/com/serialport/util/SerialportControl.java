@@ -58,15 +58,6 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         return isReaderOpen;
     }
 
-    @Override
-    public int GetReaderSendCmd(byte[] dest) {
-        return 0;
-    }
-
-    @Override
-    public int GetReaderRecvData(byte[] dest) {
-        return 0;
-    }
 
     @Override
     public boolean findCard(final Context context) {
@@ -497,15 +488,6 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         return true;
     }
 
-    @Override
-    public boolean ReadReaderRegs(int Addr, byte RegNum, byte[] Dest) {
-        return false;
-    }
-
-    @Override
-    public boolean SendM1Command(byte[] m1Cmd, int cmdLen) {
-        return false;
-    }
 
     @Override
     public boolean checkKey(final Context context, CardData cardData) {

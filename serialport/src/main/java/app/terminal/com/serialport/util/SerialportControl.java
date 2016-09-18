@@ -1409,6 +1409,9 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         }
         sendcommand[5] = (byte) (cosCmd.length + 3);
         sendcommand[8 + cosCmd.length] = CheckSum(sendcommand, 9 + cosCmd.length);
+        for (int j = 0; j < cosCmd.length; j++) {
+            sendcommand[j + 8] = cosCmd[j];
+        }
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
             Intent mIntent = new Intent(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);

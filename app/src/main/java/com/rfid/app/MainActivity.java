@@ -122,8 +122,9 @@ public class MainActivity extends AppCompatActivity {
         if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
+        } else {
+            BaseApp.instance().controlLinksilliconCardIntface.getReaderId(this);
         }
-        BaseApp.instance().controlLinksilliconCardIntface.getReaderId(this);
 
     }
 
@@ -136,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
         if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
+        } else {
+            BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(this, baudRate);
         }
-        BaseApp.instance().controlLinksilliconCardIntface.setBaudRate(this, baudRate);
     }
 
     /**
@@ -146,7 +148,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void serialPortSetting(View v) {
-        SerialPortSettingsActivity.show(this);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {
+            SerialPortSettingsActivity.show(this);
+        }
     }
 
     /**
@@ -155,7 +162,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void basicOperation(View v) {
-        BaseOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {
+            BaseOperateActivity.show(this, SerialPortEntity.getInstance().getSerialPort());
+        }
 
     }
 
@@ -166,7 +178,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void basicOperationCard(View v) {
-        BasicOperationCardActivity.show(this);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {
+            BasicOperationCardActivity.show(this);
+        }
 
     }
 
@@ -176,7 +193,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void S50(View v) {
-        S50CardOperateActivity.show(this);
+       /* if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {*/
+            S50CardOperateActivity.show(this);
+//        }
 
     }
 
@@ -186,7 +208,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void S70(View v) {
-        S70CardOperateActivity.show(this);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {
+            S70CardOperateActivity.show(this);
+        }
     }
 
     /**
@@ -195,7 +222,12 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void cpu(View v) {
-        CpuCardOperateActivity.show(this);
+        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
+            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
+            SerialPortSettingsActivity.show(this);
+        } else {
+            CpuCardOperateActivity.show(this);
+        }
     }
 
 

@@ -200,11 +200,6 @@ public class S50CardOperateActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
-            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
-            SerialPortSettingsActivity.show(this);
-            this.finish();
-        }
     }
 
     /**
@@ -281,8 +276,13 @@ public class S50CardOperateActivity extends AppCompatActivity {
      */
     public void s50InitWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
-        CardData cardData = new CardData(writeData, CardType.S50, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
+            CardData cardData = new CardData(writeData, CardType.S50, FindAddrType.ABSOLUTE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+            BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        } else if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
+            CardData cardData = new CardData(writeData, CardType.S50, FindAddrType.RELATIVE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+            BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        }
     }
 
     /**

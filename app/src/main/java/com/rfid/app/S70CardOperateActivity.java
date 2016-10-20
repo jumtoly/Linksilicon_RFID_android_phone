@@ -259,8 +259,13 @@ public class S70CardOperateActivity extends AppCompatActivity {
      */
     public void s70InitWallet(View v) {
         byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
-        CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
+            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.ABSOLUTE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+            BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        } else if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
+            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.RELATIVE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+            BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
+        }
     }
 
     /**

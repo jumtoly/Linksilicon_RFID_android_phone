@@ -21,7 +21,7 @@ public interface ControlLinksilliconCardIntface {
     // 导出的读卡器公共函数
     boolean openReader(UsbManager usbManager, int baud, int byteSize, int parity, int stop) throws IOException;
 
-    boolean closeReader(UsbManager usbManager) throws IOException;
+    void closeReader(UsbManager usbManager) throws IOException;
 
     boolean isReaderOpen();
 

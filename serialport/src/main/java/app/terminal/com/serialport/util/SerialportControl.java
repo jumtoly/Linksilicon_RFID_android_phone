@@ -44,13 +44,11 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean closeReader(UsbManager usbManager) throws IOException {
+    public void closeReader(UsbManager usbManager) throws IOException {
        /* UsbDeviceConnection connection = usbManager.openDevice(SerialPortEntity.getInstance().getSerialPort().getDriver().getDevice());
         SerialPortEntity.getInstance().setConnection(connection);
         SerialPortEntity.getInstance().getSerialPort().open(connection);*/
         SerialPortEntity.getInstance().getSerialPort().close();
-        isReaderOpen = false;
-        return isReaderOpen;
     }
 
     @Override
@@ -148,7 +146,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         };
         stateChangeUtils.onDeviceStateChange(selectcard, responeDataIntface);
-        return false;
+        return true;
     }
 
     @Override
@@ -210,7 +208,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         };
         stateChangeUtils.onDeviceStateChange(SendByteData.GET_CARD_INFO, responeDataIntface);
-        return false;
+        return true;
     }
 
     @Override
@@ -280,7 +278,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             stateChangeUtils.onDeviceStateChange(SendByteData.STOP_BUZZER, responeDataIntface);
 
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -310,7 +308,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         };
         stateChangeUtils.onDeviceStateChange(SendByteData.STOP_ALL_ANTENNA, responeDataIntface);
-        return false;
+        return true;
     }
 
     @Override
@@ -340,7 +338,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         };
         stateChangeUtils.onDeviceStateChange(SendByteData.MANUALLY_DETECTING_CARD, responeDataIntface);
-        return false;
+        return true;
     }
 
     @Override
@@ -372,7 +370,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         };
         stateChangeUtils.onDeviceStateChange(SendByteData.SERIAL_NUMBER_BYTE, responeDataIntface);
 
-        return false;
+        return true;
     }
 
     @Override
@@ -713,7 +711,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         };
         stateChangeUtils.onDeviceStateChange(walletInitializationM1, responeDataIntface);
-        return false;
+        return true;
     }
 
     @Override

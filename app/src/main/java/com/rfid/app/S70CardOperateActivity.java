@@ -146,11 +146,11 @@ public class S70CardOperateActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == 0) {
                     findAddrType = FindAddrType.ABSOLUTE_ADDR;
-                    sectorAddressSpinner.setEnabled(true);
+                    sectorAddressSpinner.setEnabled(false);
                 } else if (position == 1) {
 
                     findAddrType = FindAddrType.RELATIVE_ADDR;
-                    sectorAddressSpinner.setEnabled(false);
+                    sectorAddressSpinner.setEnabled(true);
                 }
             }
 

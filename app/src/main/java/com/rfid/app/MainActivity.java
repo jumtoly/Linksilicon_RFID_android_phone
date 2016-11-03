@@ -148,12 +148,7 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void serialPortSetting(View v) {
-        if (!BaseApp.instance().controlLinksilliconCardIntface.isReaderOpen()) {
-            Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
-            SerialPortSettingsActivity.show(this);
-        } else {
-            SerialPortSettingsActivity.show(this);
-        }
+        SerialPortSettingsActivity.show(this);
     }
 
     /**
@@ -197,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "请先打开读卡器串口", Toast.LENGTH_SHORT).show();
             SerialPortSettingsActivity.show(this);
         } else {*/
-            S50CardOperateActivity.show(this);
+        S50CardOperateActivity.show(this);
 //        }
 
     }

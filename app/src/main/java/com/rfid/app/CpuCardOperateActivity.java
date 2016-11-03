@@ -2,15 +2,14 @@ package com.rfid.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.HexDump;
 
 public class CpuCardOperateActivity extends AppCompatActivity {
@@ -57,7 +56,7 @@ public class CpuCardOperateActivity extends AppCompatActivity {
             Toast.makeText(this, "请输入正确的COS命令", Toast.LENGTH_SHORT).show();
             return;
         }
-        byte[] cmdByte = HexDump.hexStringToByteArray(cmd.getText().toString().trim());
+        byte[] cmdByte = HexDump.hexStringToByteArray(this,cmd.getText().toString().trim());
         BaseApp.instance().controlLinksilliconCardIntface.sendCosCommand(this, cmdByte);
     }
 
@@ -73,8 +72,8 @@ public class CpuCardOperateActivity extends AppCompatActivity {
             Toast.makeText(this, "请输入正确的密钥或密钥标识号", Toast.LENGTH_SHORT).show();
             return;
         }
-        byte[] ketByte = HexDump.hexStringToByteArray(ketEt.getText().toString().trim());
-        byte[] ketLogoByte = HexDump.hexStringToByteArray(ketLogoEt.getText().toString().trim());
+        byte[] ketByte = HexDump.hexStringToByteArray(this,ketEt.getText().toString().trim());
+        byte[] ketLogoByte = HexDump.hexStringToByteArray(this,ketLogoEt.getText().toString().trim());
         BaseApp.instance().controlLinksilliconCardIntface.exauthentication(this, ketByte, ketLogoByte);
 
     }

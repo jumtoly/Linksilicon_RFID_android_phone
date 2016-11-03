@@ -2,7 +2,6 @@ package com.rfid.app;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Display;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import app.terminal.com.serialport.driver.UsbSerialPort;
 import app.terminal.com.serialport.util.CardData;
 import app.terminal.com.serialport.util.CardType;
 import app.terminal.com.serialport.util.CreateControl;
@@ -202,7 +200,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70KeyAuthentiation(View v) {
-        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] key = HexDump.hexStringToByteArray(this, privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
         BaseApp.instance().controlLinksilliconCardIntface.checkKey(this, cardData);
     }
@@ -213,7 +211,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70CompositeBlockRead(View v) {
-        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] key = HexDump.hexStringToByteArray(this, privateKeyEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
         BaseApp.instance().controlLinksilliconCardIntface.composeRead(this, cardData);
     }
@@ -224,8 +222,8 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70CompositeBlockWrite(View v) {
-        byte[] key = HexDump.hexStringToByteArray(privateKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] key = HexDump.hexStringToByteArray(this, privateKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] writeData = HexDump.hexStringToByteArray(this, blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr, keyType, key);
         BaseApp.instance().controlLinksilliconCardIntface.composeWrite(this, cardData);
     }
@@ -247,7 +245,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70WriteBlock(View v) {
-        byte[] writeData = HexDump.hexStringToByteArray(blockDataEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] writeData = HexDump.hexStringToByteArray(this, blockDataEt.getText().toString().replaceAll("\\s*", ""));
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
         BaseApp.instance().controlLinksilliconCardIntface.writeBlock(this, cardData);
     }
@@ -258,12 +256,24 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70InitWallet(View v) {
-        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+        if (moneyNumEt.getText() == null || moneyNumEt.getText().equals(" ")) {
+            Toast.makeText(this, "请输入钱包初始化金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte writeData;
+        try {
+            writeData = HexDump.getBytes(Integer.parseInt(moneyNumEt.getText().toString().replaceAll("\\s*", "")));
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "请输入钱包初始化整数金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
         if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
-            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.ABSOLUTE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.ABSOLUTE_ADDR, Byte.valueOf(sectorAddressSpinner.getSelectedItem().toString()), Byte.valueOf(blockAddressSpinner.getSelectedItem().toString()));
             BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
-        } else if (findAddrWaySpinner.getSelectedItemPosition() == 0) {
-            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.RELATIVE_ADDR, (byte) sectorAddressSpinner.getSelectedItem(), (byte) blockAddressSpinner.getSelectedItem());
+        } else {
+            CardData cardData = new CardData(writeData, CardType.S70, FindAddrType.RELATIVE_ADDR, Byte.valueOf(sectorAddressSpinner.getSelectedItem().toString()), Byte.valueOf(blockAddressSpinner.getSelectedItem().toString()));
             BaseApp.instance().controlLinksilliconCardIntface.walletInit(this, cardData);
         }
     }
@@ -275,7 +285,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
      */
     public void s70ReadWallet(View v) {
         CardData cardData = new CardData(CardType.S70, findAddrType, sectorAddr, blockAddr);
-        BaseApp.instance().controlLinksilliconCardIntface.readWallet(this, cardData);
+        moneyNumEt.setText(BaseApp.instance().controlLinksilliconCardIntface.readWallet(this, cardData));
     }
 
     /**
@@ -284,7 +294,18 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70AddedWallet(View v) {
-        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+        if (moneyNumEt.getText().toString().trim() == null || moneyNumEt.getText().toString().trim().equals("")) {
+            Toast.makeText(this, "请输入钱包初始化金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte writeData;
+        try {
+            writeData = HexDump.getBytes(Integer.parseInt(moneyNumEt.getText().toString().replaceAll("\\s*", "")));
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "请输入钱包初始化整数金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
         BaseApp.instance().controlLinksilliconCardIntface.walletAdd(this, cardData);
     }
@@ -295,7 +316,18 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70ImpairmentWallet(View v) {
-        byte[] writeData = HexDump.hexStringToByteArray(moneyNumEt.getText().toString().replaceAll("\\s*", ""));
+
+        if (moneyNumEt.getText() == null || moneyNumEt.getText().equals(" ")) {
+            Toast.makeText(this, "请输入钱包初始化金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        byte writeData;
+        try {
+            writeData = HexDump.getBytes(Integer.parseInt(moneyNumEt.getText().toString().replaceAll("\\s*", "")));
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "请输入钱包初始化整数金额", Toast.LENGTH_SHORT).show();
+            return;
+        }
         CardData cardData = new CardData(writeData, CardType.S70, findAddrType, sectorAddr, blockAddr);
         BaseApp.instance().controlLinksilliconCardIntface.walletDec(this, cardData);
     }
@@ -306,20 +338,21 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70ModifyControlWord(View v) {
-        byte[] aOldKey = HexDump.hexStringToByteArray(aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] bOldKey = HexDump.hexStringToByteArray(bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
-        ModifyKey modifyControlModifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
-        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
-            Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
-            ModifyControlActivity.show(this, modifyControlModifyKey);
+        byte[] aOldKey = HexDump.hexStringToByteArray(this, aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bOldKey = HexDump.hexStringToByteArray(this, bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] aNewKey = HexDump.hexStringToByteArray(this, aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bNewKey = HexDump.hexStringToByteArray(this, bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
             return;
+        }
+        ModifyKey modifyControlModifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
+        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+            ModifyControlActivity.show(this, modifyControlModifyKey);
         } else {
             if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, true, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), 26)) {//密钥A校验
                 if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), 27)) {//密钥B校验
-                    byte[] controlWord = HexDump.hexStringToByteArray(CreateControl.getInstance().getNewctrl());
-                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this, modifyControlModifyKey, controlWord, HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl()));
+                    byte[] controlWord = HexDump.hexStringToByteArray(this, CreateControl.getInstance().getNewctrl());
+                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this, modifyControlModifyKey, controlWord, HexDump.hexStringToByteArray(this, CreateControl.getInstance().getOldctrl()));
                 } else {
                     Toast.makeText(this, "密钥B验证失败", Toast.LENGTH_SHORT).show();
                 }
@@ -336,11 +369,14 @@ public class S70CardOperateActivity extends AppCompatActivity {
      * @param v
      */
     public void s70ModifyPrivateKey(View v) {
-        byte[] aOldKey = HexDump.hexStringToByteArray(aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] bOldKey = HexDump.hexStringToByteArray(bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] aNewKey = HexDump.hexStringToByteArray(aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
-        byte[] bNewKey = HexDump.hexStringToByteArray(bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
-        ModifyKey modifyKey = new ModifyKey(selectSector, aOldKey, bOldKey, aNewKey, bNewKey);
+        byte[] aOldKey = HexDump.hexStringToByteArray(this, aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bOldKey = HexDump.hexStringToByteArray(this, bOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] aNewKey = HexDump.hexStringToByteArray(this, aNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        byte[] bNewKey = HexDump.hexStringToByteArray(this, bNewKeyEt.getText().toString().replaceAll("\\s*", ""));
+        if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
+            return;
+        }
+        ModifyKey modifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
         if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
             if (BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey)) {
                 if (!BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey)) {

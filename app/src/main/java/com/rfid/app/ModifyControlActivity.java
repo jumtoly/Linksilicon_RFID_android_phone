@@ -677,8 +677,13 @@ public class ModifyControlActivity extends AppCompatActivity {
      * @param v
      */
     public void okModify(View v) {
+        if (currentCtrlWord.getText().toString().trim() == null || "".equals(currentCtrlWord.getText().toString().trim())) {
+            Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
+            return;
+        }
         CreateControl.getInstance().setOldctrl(currentCtrlWord.getText().toString().trim());
         CreateControl.getInstance().setNewctrl(ctrlWordInfo.getText().toString().trim());
+//        BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this,modifyKey,currentCtrlWord,ctrlWordInfo);
         finish();
     }
 
@@ -694,7 +699,7 @@ public class ModifyControlActivity extends AppCompatActivity {
     public void getCurrentCtrlWord() {
         if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
             currentCtrlWord.setText(CreateControl.getInstance().getOldctrl());
-            setControl(HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl()));
+            setControl(HexDump.hexStringToByteArray(this, CreateControl.getInstance().getOldctrl()));
         }
     }
 

@@ -684,7 +684,13 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             //TODO 钱包初始化错误
             return false;
         }
-
+        int itemp = HexDump.byte4ToInt(cardData.getWriteMoney());
+        walletInitializationM1[11] = (byte) (itemp % 256);
+        walletInitializationM1[12] = (byte) (itemp / 256);
+        itemp -= (walletInitializationM1[11] + walletInitializationM1[12] * 0x100);
+        itemp = itemp / 65536;
+        walletInitializationM1[13] = (byte) (itemp % 256);
+        walletInitializationM1[14] = (byte) (itemp / 256);
         walletInitializationM1[15] = CheckSum(walletInitializationM1, 16);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
@@ -715,7 +721,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean readWallet(final Context context, CardData cardData) {
+    public String readWallet(final Context context, CardData cardData) {
         final boolean[] isOK = new boolean[1];
         byte[] purseReadM1 = SendByteData.PURSE_READ_M1;
 
@@ -726,10 +732,10 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         } else {
             if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
                 //块地址设置错误
-                return isOK[0] = false;
+                return "";
             } else if ((cardData.getBlockAddr() >= 256) && (cardData.getCardType() == CardType.S70)) {
                 //块地址设置错误
-                return isOK[0] = false;
+                return "";
             }
             purseReadM1[8] = 0;
             purseReadM1[9] = cardData.getSectorAddr();
@@ -738,10 +744,10 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
 
         if (CheckBlockAddr(purseReadM1[8], purseReadM1[9], purseReadM1[10])) {
             //钱包初始化错误
-            return isOK[0] = false;
+            return "";
         }
 
-
+        final int[] result = {0};
         purseReadM1[11] = CheckSum(purseReadM1, 12);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
@@ -759,6 +765,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             public void sendData(byte[] data) {
                 Log.i(TAG, "sendData：" + HexDump.toHexString(data));
                 mIntent.putExtra("SENDDATA", data);
+                result[0] = data[7] + data[8] * 0x100 + data[9] * 0x10000 + data[10] * 0x1000000;
             }
 
             @Override
@@ -769,7 +776,8 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         };
         stateChangeUtils.onDeviceStateChange(purseReadM1, responeDataIntface);
         SystemClock.sleep(200);
-        return isOK[0];
+
+        return result[0] + "";
     }
 
     @Override
@@ -798,7 +806,14 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             //TODO 钱包初始化错误
             return false;
         }
-
+        int itemp = HexDump.byte4ToInt(cardData.getWriteMoney());
+        walletRechargeM1[12] = (byte) (itemp % 256);
+        walletRechargeM1[13] = (byte) (itemp / 256);
+        itemp = (itemp - (walletRechargeM1[12] + walletRechargeM1[13] * 256));
+        itemp = itemp / 65536;
+        walletRechargeM1[14] = (byte) (itemp % 65536);
+        walletRechargeM1[15] = (byte) (itemp / 65536);
+        walletRechargeM1[8] = 0x01;
         walletRechargeM1[16] = CheckSum(walletRechargeM1, 17);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
@@ -857,7 +872,14 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             return isOK[0] = false;
         }
 
-
+        int itemp = HexDump.byte4ToInt(cardData.getWriteMoney());
+        purseDecrementM1[12] = (byte) (itemp % 256);
+        purseDecrementM1[13] = (byte) (itemp / 256);
+        itemp = (itemp - (purseDecrementM1[12] + purseDecrementM1[13] * 256));
+        itemp = itemp / 65536;
+        purseDecrementM1[14] = (byte) (itemp % 65536);
+        purseDecrementM1[15] = (byte) (itemp / 65536);
+        purseDecrementM1[8] = 0x01;
         purseDecrementM1[16] = CheckSum(purseDecrementM1, 17);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
@@ -1038,11 +1060,15 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         byte[] modifykey = SendByteData.KEY_MODIFY;
 
 
-        if (false == checkCtrlKey(context, true, sector, oldKeyA, 26)) {
+        if (false == checkCtrlKey(context, true, sector, oldKeyA, 29)) {
             return false;
         }
         SystemClock.sleep(50);
-        if (false == checkCtrlKey(context, false, sector, oldKeyB, 27)) {
+        if (false == checkCtrlKey(context, false, sector, oldKeyB, 30)) {
+            return false;
+        }
+        boolean bRet = readCtrlWord(context, sector, oldKeyA);
+        if (bRet) {
             return false;
         }
         modifykey[10] = (byte) sector;
@@ -1057,10 +1083,10 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         byte[] order = new byte[2];
         byte ctrl = 0;
         for (int i = 0; i < 2; i++) {
-            order[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[i + 1];
+            order[i] = HexDump.hexStringToByteArray(context, CreateControl.getInstance().getOldctrl())[i + 1];
         }
 
-        if (keyType == 0) {
+        if (keyType == KeyType.KEY_A) {
             modifykey[12] = 0x60;    //用密钥A写数据
             for (int i = 13, j = 0; i < 19; i++, j++) {
                 modifykey[i] = oldKeyA[j];
@@ -1068,13 +1094,13 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             }
 
             for (int i = 25, j = 0; i < 29; i++, j++) {
-                modifykey[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
+                modifykey[i] = HexDump.hexStringToByteArray(context, CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
             }
 
             for (int i = 29, j = 0; i < 35; i++, j++) {
                 modifykey[i] = oldKeyB[j];
             }
-        } else if (keyType == 1) {
+        } else if (keyType == KeyType.KEY_B) {
             modifykey[12] = 0x61;    //用密钥B写数据
 
             for (int i = 13, j = 0; i < 19; i++, j++) {
@@ -1083,7 +1109,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             }
 
             for (int i = 25, j = 0; i < 29; i++, j++) {
-                modifykey[i] = HexDump.hexStringToByteArray(CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
+                modifykey[i] = HexDump.hexStringToByteArray(context, CreateControl.getInstance().getOldctrl())[j];            //4位控制字写入
             }
 
             for (int i = 29, j = 0; i < 35; i++, j++) {
@@ -1266,7 +1292,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
     }
 
     @Override
-    public boolean checkCtrlKey(final Context context, boolean aORb, int block, byte[] key, int order) {
+    public boolean checkCtrlKey(final Context context, boolean aORb, int block, byte[] key, final int order) {
         final boolean isOK[] = new boolean[1];
         byte[] checkKey = new byte[19];
         checkKey[0] = 0x55;
@@ -1301,6 +1327,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 Log.i(TAG, "responseData：" + HexDump.toHexString(data));
 
                 isOK[0] = CheckResponeData.isOk(data);
+                mIntent.putExtra("CURRENT_ORDER",order);
                 mIntent.putExtra("RESPONSEDATA", data);
                 context.sendBroadcast(mIntent);
 
@@ -1309,6 +1336,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             @Override
             public void sendData(byte[] data) {
                 Log.i(TAG, "sendData：" + HexDump.toHexString(data));
+                mIntent.putExtra("CURRENT_ORDER",order);
                 mIntent.putExtra("SENDDATA", data);
             }
 

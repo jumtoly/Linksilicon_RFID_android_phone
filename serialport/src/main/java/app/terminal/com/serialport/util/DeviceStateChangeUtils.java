@@ -63,7 +63,7 @@ public class DeviceStateChangeUtils {
                         if (CheckResponeData.isOk(data)) {
                             msgSb.append(currentOperateStr).append("执行成功").append(System.getProperty("line.separator"));
                         } else {
-                            msgSb.append(CheckResponeData.getErrorInfo(data)).append(System.getProperty("line.separator"));
+                            msgSb.append(CheckResponeData.getErrorInfo(data,0)).append(System.getProperty("line.separator"));
                         }
                     }
 

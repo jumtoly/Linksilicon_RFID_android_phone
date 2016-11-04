@@ -64,7 +64,7 @@ public interface ControlLinksilliconCardIntface {
 
     boolean walletInit(Context context, CardData cardData);
 
-    boolean readWallet(Context context, CardData cardData);
+    String readWallet(Context context, CardData cardData);
 
     boolean walletAdd(Context context, CardData cardData);
 

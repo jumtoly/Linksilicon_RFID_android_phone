@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(BroadcastIntface.GETREADERID_BROADCASTRECEIVER)) {
                 byte[] responsedata = intent.getByteArrayExtra("RESPONSEDATA");
                 byte[] sendData = intent.getByteArrayExtra("SENDDATA");
-                updateReceivedData(sendData, responsedata);
+                int currentOrder=intent.getIntExtra("CURRENT_ORDER",0);
+                updateReceivedData(sendData, responsedata,currentOrder);
 
             }
 
@@ -226,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void updateReceivedData(byte[] data, byte[] responsedata) {
+    public void updateReceivedData(byte[] data, byte[] responsedata, int currentOrder) {
 
         if (responsedata != null) {
             if (CheckResponeData.isOk(responsedata)) {
@@ -239,9 +240,9 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder msg = new StringBuilder();
                 if (data != null) {
 
-                    msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                    msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata,currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
                 } else {
-                    msg.append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                    msg.append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata,currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
                 }
                 mDumpTextView.append(msg.toString());
                 mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());

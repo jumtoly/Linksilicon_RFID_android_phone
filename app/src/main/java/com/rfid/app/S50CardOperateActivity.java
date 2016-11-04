@@ -397,19 +397,17 @@ public class S50CardOperateActivity extends AppCompatActivity {
         if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
             return;
         }
-        ModifyKey modifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
-        BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_A, aNewKey, aOldKey, bOldKey);
-
-        if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
-            if (BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey)) {
-                if (!BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey)) {
-                    Toast.makeText(this, "密钥B修改失败", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "密钥A修改失败", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "读取控件字失败", Toast.LENGTH_SHORT).show();
+//        ModifyKey modifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
+        boolean isAOk = BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_A, aNewKey, aOldKey, bOldKey);
+        if (!isAOk) {
+            String strKey = HexDump.toHexString(aNewKey);
+            aOldKeyEt.setText(strKey);
+        }
+        aOldKey = HexDump.hexStringToByteArray(this, aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        boolean isBOk = BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_B, bNewKey, aOldKey, bOldKey);
+        if (!isBOk) {
+            String strKey = HexDump.toHexString(bNewKey);
+            aOldKeyEt.setText(strKey);
         }
     }
 

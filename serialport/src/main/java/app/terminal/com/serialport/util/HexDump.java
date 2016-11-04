@@ -16,6 +16,9 @@
 
 package app.terminal.com.serialport.util;
 
+import android.content.Context;
+import android.widget.Toast;
+
 /**
  * Clone of Android's HexDump class, for use in debugging. Cosmetic changes
  * only.
@@ -151,15 +154,27 @@ public class HexDump {
         throw new RuntimeException("Invalid hex char '" + c + "'");
     }
 
-    public static byte[] hexStringToByteArray(String hexString) {
+    public static byte[] hexStringToByteArray(Context context, String hexString) {
+        hexString = hexString.replaceAll(" ", "");
         int length = hexString.length();
+        if (length % 2 != 0) {
+            Toast.makeText(context, "不完整的十六进制数,请检查数据是否完整", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         byte[] buffer = new byte[length / 2];
-
         for (int i = 0; i < length; i += 2) {
             buffer[i / 2] = (byte) ((toByte(hexString.charAt(i)) << 4) | toByte(hexString
                     .charAt(i + 1)));
         }
 
         return buffer;
+    }
+
+    public static byte getBytes(int data) {
+        return (byte) data;
+    }
+
+    public static int byte4ToInt(byte b) {
+        return b & 0xFF;
     }
 }

@@ -4,6 +4,7 @@ package app.terminal.com.serialport.util;
  * Created by sly on 2016/5/21.
  */
 public class CardData {
+    private byte writeMoney;//钱包金额
     private byte[] writeData;//控制字
     private int cardType;//卡类型
     private int findAddrType;//寻址方式
@@ -69,6 +70,22 @@ public class CardData {
         this.key = key;
     }
 
+    public byte getWriteMoney() {
+        return writeMoney;
+    }
+
+    public void setWriteMoney(byte writeMoney) {
+        this.writeMoney = writeMoney;
+    }
+
+    public byte[] getWriteData() {
+        return writeData;
+    }
+
+    public void setWriteData(byte[] writeData) {
+        this.writeData = writeData;
+    }
+
     public CardData(int cardType, int findAddrType, byte sectorAddr, byte blockAddr, int keyType, byte[] key) {
 
         this.cardType = cardType;
@@ -90,6 +107,13 @@ public class CardData {
     }
 
     public CardData(int cardType, int findAddrType, byte sectorAddr, byte blockAddr) {
+        this.cardType = cardType;
+        this.findAddrType = findAddrType;
+        this.sectorAddr = sectorAddr;
+        this.blockAddr = blockAddr;
+    }
+    public CardData(byte writeMoney, int cardType, int findAddrType, byte sectorAddr, byte blockAddr) {
+        this.writeMoney = writeMoney;
         this.cardType = cardType;
         this.findAddrType = findAddrType;
         this.sectorAddr = sectorAddr;

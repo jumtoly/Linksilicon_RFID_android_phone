@@ -1262,12 +1262,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             @Override
             public void responseData(byte[] data) {
                 Log.i(TAG, "responseData：" + HexDump.toHexString(data));
-                isOK[0] = CheckResponeData.isOk(data);
-                if (isOK[0]) {
-                    CreateControl.getInstance().setOldctrl(HexDump.toHexString(data));
-                } else {
-                    CreateControl.getInstance().setOldctrl("000000");
-                }
+                isOK[0] = true;
                 mIntent.putExtra("RESPONSEDATA", data);
                 context.sendBroadcast(mIntent);
 
@@ -1327,7 +1322,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
                 Log.i(TAG, "responseData：" + HexDump.toHexString(data));
 
                 isOK[0] = CheckResponeData.isOk(data);
-                mIntent.putExtra("CURRENT_ORDER",order);
+                mIntent.putExtra("CURRENT_ORDER", order);
                 mIntent.putExtra("RESPONSEDATA", data);
                 context.sendBroadcast(mIntent);
 
@@ -1336,7 +1331,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             @Override
             public void sendData(byte[] data) {
                 Log.i(TAG, "sendData：" + HexDump.toHexString(data));
-                mIntent.putExtra("CURRENT_ORDER",order);
+                mIntent.putExtra("CURRENT_ORDER", order);
                 mIntent.putExtra("SENDDATA", data);
             }
 

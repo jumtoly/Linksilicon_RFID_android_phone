@@ -61,6 +61,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
     private int findAddrType = FindAddrType.ABSOLUTE_ADDR;
     private int keyType = KeyType.KEY_A;
     private byte selectSector = 0;
+    private ModifyKey modifyControlModifyKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -345,14 +346,17 @@ public class S70CardOperateActivity extends AppCompatActivity {
         if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
             return;
         }
-        ModifyKey modifyControlModifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
-        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+        modifyControlModifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
+        ModifyControlActivity.show(this, modifyControlModifyKey);
+      /*  if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+            Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
             ModifyControlActivity.show(this, modifyControlModifyKey);
+            return;
         } else {
-            if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, true, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), 26)) {//密钥A校验
-                if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), 27)) {//密钥B校验
+            if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, true, modifyControlModifyKey.getSector(), modifyControlModifyKey.getaOldKey(), MODIFYCTRLCHECKA)) {
+                if (BaseApp.instance().controlLinksilliconCardIntface.checkCtrlKey(this, false, modifyControlModifyKey.getSector(), modifyControlModifyKey.getbOldKey(), MODIFYCTRLCHECKB)) {
                     byte[] controlWord = HexDump.hexStringToByteArray(this, CreateControl.getInstance().getNewctrl());
-                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this, modifyControlModifyKey, controlWord, HexDump.hexStringToByteArray(this, CreateControl.getInstance().getOldctrl()));
+                    BaseApp.instance().controlLinksilliconCardIntface.modifyControl(S50CardOperateActivity.this, modifyControlModifyKey, controlWord, HexDump.hexStringToByteArray(this, CreateControl.getInstance().getOldctrl()));
                 } else {
                     Toast.makeText(this, "密钥B验证失败", Toast.LENGTH_SHORT).show();
                 }
@@ -360,7 +364,7 @@ public class S70CardOperateActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "密钥A验证失败", Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
     }
 
     /**
@@ -376,17 +380,16 @@ public class S70CardOperateActivity extends AppCompatActivity {
         if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
             return;
         }
-        ModifyKey modifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
-        if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
-            if (BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 0, aNewKey, aOldKey, bOldKey)) {
-                if (!BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, 1, bNewKey, aOldKey, bOldKey)) {
-                    Toast.makeText(this, "密钥B修改失败", Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                Toast.makeText(this, "密钥A修改失败", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "读取控件字失败", Toast.LENGTH_SHORT).show();
+        boolean isAOk = BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_A, aNewKey, aOldKey, bOldKey);
+        if (!isAOk) {
+            String strKey = HexDump.toHexString(aNewKey);
+            aOldKeyEt.setText(strKey);
+        }
+        aOldKey = HexDump.hexStringToByteArray(this, aOldKeyEt.getText().toString().replaceAll("\\s*", ""));
+        boolean isBOk = BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_B, bNewKey, aOldKey, bOldKey);
+        if (!isBOk) {
+            String strKey = HexDump.toHexString(bNewKey);
+            aOldKeyEt.setText(strKey);
         }
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -39,9 +40,8 @@ public class MainActivity extends AppCompatActivity {
             if (action.equals(BroadcastIntface.GETREADERID_BROADCASTRECEIVER)) {
                 byte[] responsedata = intent.getByteArrayExtra("RESPONSEDATA");
                 byte[] sendData = intent.getByteArrayExtra("SENDDATA");
-                int currentOrder=intent.getIntExtra("CURRENT_ORDER",0);
-                updateReceivedData(sendData, responsedata,currentOrder);
-
+                int currentOrder = intent.getIntExtra("CURRENT_ORDER", 0);
+                updateReceivedData(sendData, responsedata, currentOrder);
             }
 
         }
@@ -240,9 +240,9 @@ public class MainActivity extends AppCompatActivity {
                 StringBuilder msg = new StringBuilder();
                 if (data != null) {
 
-                    msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata,currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                    msg.append("发送命令：" + HexDump.toHexString(data) + System.getProperty("line.separator")).append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata, currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
                 } else {
-                    msg.append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata,currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
+                    msg.append("接收数据：" + HexDump.toHexString(responsedata)).append(CheckResponeData.getErrorInfo(responsedata, currentOrder) + System.getProperty("line.separator") + System.getProperty("line.separator"));
                 }
                 mDumpTextView.append(msg.toString());
                 mScrollView.smoothScrollTo(0, mDumpTextView.getBottom());

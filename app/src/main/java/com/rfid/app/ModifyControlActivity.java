@@ -4,7 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -16,6 +20,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import app.terminal.com.serialport.inter.BroadcastIntface;
 import app.terminal.com.serialport.util.CheckResponeData;
@@ -58,6 +67,72 @@ public class ModifyControlActivity extends AppCompatActivity {
     private String[] write = new String[3];
     private String[] add = new String[3];
     private String[] dec = new String[3];
+
+
+    private static ModifyControlActivity modifyControlActivity;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+
+    public static ModifyControlActivity getInstance() {
+        if (modifyControlActivity == null) {
+            modifyControlActivity = new ModifyControlActivity();
+
+        }
+        return modifyControlActivity;
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(BroadcastIntface.GETREADERID_BROADCASTRECEIVER)) {
+                byte[] responsedata = intent.getByteArrayExtra("RESPONSEDATA");
+
+
+                Message msg = Message.obtain();
+                msg.obj = responsedata;
+                handler.sendMessage(msg);
+            }
+
+        }
+    };
+
+    private void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction(BroadcastIntface.GETREADERID_BROADCASTRECEIVER);
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+    }
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            if (msg.obj != null) {
+                byte[] msgByte = (byte[]) msg.obj;
+                StringBuffer sb = new StringBuffer();
+                boolean isOk = CheckResponeData.isOk(msgByte);
+                if (isOk) {
+                    sb.append(msgByte[13]).append(" ").append(msgByte[14]).append(" ").append(msgByte[15]).append(" ").append(msgByte[16]);
+                    currentCtrlWord.setText(sb.toString());
+                } else {
+                    currentCtrlWord.setText("00 00 00 00 00");
+                }
+                byte[] responsedata = new byte[128];
+
+                for (int i = 0; i < msgByte.length; i++) {
+                    responsedata[i] = msgByte[i];
+                }
+                setControl(responsedata);
+                return true;
+            } else {
+                return false;
+            }
+        }
+    });
+
 
     private void setControl(byte[] data) {
 
@@ -288,33 +363,33 @@ public class ModifyControlActivity extends AppCompatActivity {
 
         switch (blockorder[3]) {
             case 0: {
-                modify3AWrite.setSelection(2);
+                modify3AWrite.setSelection(0);
                 modify3CtrlWrite.setSelection(3);
-                modify3BRead.setSelection(2);
-                modify3BWrite.setSelection(2);
+                modify3BRead.setSelection(0);
+                modify3BWrite.setSelection(0);
 
 
                 break;
             }
             case 1: {
-                modify3AWrite.setSelection(2);
-                modify3CtrlWrite.setSelection(2);
-                modify3BRead.setSelection(2);
-                modify3BWrite.setSelection(2);
+                modify3AWrite.setSelection(0);
+                modify3CtrlWrite.setSelection(0);
+                modify3BRead.setSelection(0);
+                modify3BWrite.setSelection(0);
 
                 break;
             }
             case 2: {
                 modify3AWrite.setSelection(3);
                 modify3CtrlWrite.setSelection(3);
-                modify3BRead.setSelection(2);
+                modify3BRead.setSelection(0);
                 modify3BWrite.setSelection(3);
                 break;
             }
             case 3: {
                 modify3AWrite.setSelection(1);
                 modify3CtrlWrite.setSelection(1);
-                modify3BRead.setSelection(2);
+                modify3BRead.setSelection(3);
                 modify3BWrite.setSelection(1);
                 break;
             }
@@ -365,13 +440,17 @@ public class ModifyControlActivity extends AppCompatActivity {
         setContentView(R.layout.activity_modify_control);
         WindowManager m = getWindowManager();
         Display d = m.getDefaultDisplay(); // 为获取屏幕宽、高
-        android.view.WindowManager.LayoutParams p = getWindow().getAttributes();
+        WindowManager.LayoutParams p = getWindow().getAttributes();
         p.height = (int) (d.getHeight() * 0.6); // 高度设置为屏幕的0.8
         p.width = (int) (d.getWidth() * 0.9); // 宽度设置为屏幕的0.7
         getWindow().setAttributes(p);
         findViews();
+        registerBoradcastReceiver();
         initView();
         getCurrentCtrlWord();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
 
@@ -612,6 +691,7 @@ public class ModifyControlActivity extends AppCompatActivity {
      * @param v
      */
     public void generatCtrlWord(View v) {
+        ctrlWordInfoStr.delete(0, ctrlWordInfoStr.length());
         byte[] str = {0x01, 0, 0, 0x69};
         for (int i = 0; i < 3; i++) {
             if (("KeyA|B".equals(read[i])) && ("KeyA|B".equals(write[i])) && ("KeyA|B".equals(add[i])) && ("KeyA|B".equals(dec[i]))) {
@@ -665,10 +745,10 @@ public class ModifyControlActivity extends AppCompatActivity {
         str[0] = (byte) ((((~str[1]) >> 4) & 0x0f) + (((~str[2]) << 4) & 0xf0));
         for (int i = 0; i < 4; i++) {
             String s = String.format("%02X", str[i]);
-            ctrlWordInfoStr.append(s);
+            ctrlWordInfoStr.append(s).append(" ");
         }
 
-        ctrlWordInfo.setText(ctrlWordInfoStr.toString());
+        ctrlWordInfo.setText(ctrlWordInfoStr.toString().substring(0, ctrlWordInfoStr.length() - 1));
     }
 
     /**
@@ -681,9 +761,9 @@ public class ModifyControlActivity extends AppCompatActivity {
             Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
             return;
         }
-        CreateControl.getInstance().setOldctrl(currentCtrlWord.getText().toString().trim());
-        CreateControl.getInstance().setNewctrl(ctrlWordInfo.getText().toString().trim());
-//        BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this,modifyKey,currentCtrlWord,ctrlWordInfo);
+        byte[] currentCtrlWordBytes = HexDump.hexStringToByteArray(this, currentCtrlWord.getText().toString().replaceAll("\\s*", ""));
+        byte[] ctrlWordInfoBytes = HexDump.hexStringToByteArray(this, ctrlWordInfo.getText().toString().replaceAll("\\s*", ""));
+        BaseApp.instance().controlLinksilliconCardIntface.modifyControl(this, modifyKey, currentCtrlWordBytes, ctrlWordInfoBytes);
         finish();
     }
 
@@ -697,10 +777,49 @@ public class ModifyControlActivity extends AppCompatActivity {
     }
 
     public void getCurrentCtrlWord() {
-        if (BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey())) {
+        BaseApp.instance().controlLinksilliconCardIntface.readCtrlWord(this, modifyKey.getSector(), modifyKey.getaOldKey());
+        SystemClock.sleep(200);
+        if (CreateControl.getInstance().getOldctrl() == "") {
+            currentCtrlWord.setText("00 00 00 00 00");
+        } else {
             currentCtrlWord.setText(CreateControl.getInstance().getOldctrl());
-            setControl(HexDump.hexStringToByteArray(this, CreateControl.getInstance().getOldctrl()));
         }
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("ModifyControl Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     private class ModifyArrayAdapter extends ArrayAdapter<String> {

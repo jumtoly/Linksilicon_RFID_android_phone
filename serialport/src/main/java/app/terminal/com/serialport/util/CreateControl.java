@@ -6,7 +6,7 @@ package app.terminal.com.serialport.util;
 public class CreateControl {
     private static CreateControl createControl;
     private String newctrl;
-    private String oldctrl;
+    private String oldctrl="00 00 00 00";
 
     private CreateControl() {
     }

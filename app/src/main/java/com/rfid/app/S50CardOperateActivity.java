@@ -364,7 +364,8 @@ public class S50CardOperateActivity extends AppCompatActivity {
             return;
         }
         modifyControlModifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
-        if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
+        ModifyControlActivity.show(this, modifyControlModifyKey);
+      /*  if (CreateControl.getInstance().getNewctrl() == null || CreateControl.getInstance().getNewctrl().length() == 0) {
             Toast.makeText(this, "请先详细设置访问条件并生成控制字！", Toast.LENGTH_SHORT).show();
             ModifyControlActivity.show(this, modifyControlModifyKey);
             return;
@@ -380,7 +381,7 @@ public class S50CardOperateActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(this, "密钥A验证失败", Toast.LENGTH_SHORT).show();
             }
-        }
+        }*/
 
     }
 
@@ -397,7 +398,6 @@ public class S50CardOperateActivity extends AppCompatActivity {
         if (aOldKey == null || bOldKey == null || aNewKey == null || bNewKey == null) {
             return;
         }
-//        ModifyKey modifyKey = new ModifyKey(selectSector, KeyType.KEY_A, aOldKey, bOldKey, aNewKey, bNewKey);
         boolean isAOk = BaseApp.instance().controlLinksilliconCardIntface.modifyKey(this, selectSector, KeyType.KEY_A, aNewKey, aOldKey, bOldKey);
         if (!isAOk) {
             String strKey = HexDump.toHexString(aNewKey);

@@ -858,7 +858,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
             if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S50)) {
                 //块地址设置错误
                 return isOK[0] = false;
-            } else if ((cardData.getBlockAddr() >= 256) && (cardData.getCardType() == CardType.S70)) {
+            } else if ((cardData.getBlockAddr() >= 64) && (cardData.getCardType() == CardType.S70)) {
                 //块地址设置错误
                 return isOK[0] = false;
             }

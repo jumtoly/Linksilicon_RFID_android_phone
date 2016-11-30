@@ -879,7 +879,7 @@ public class SerialportControl implements ControlLinksilliconCardIntface {
         itemp = itemp / 65536;
         purseDecrementM1[14] = (byte) (itemp % 65536);
         purseDecrementM1[15] = (byte) (itemp / 65536);
-        purseDecrementM1[8] = 0x01;
+        purseDecrementM1[8] = 0x02;
         purseDecrementM1[16] = CheckSum(purseDecrementM1, 17);
         DeviceStateChangeUtils stateChangeUtils = DeviceStateChangeUtils.getInstence(SerialPortEntity.getInstance().getSerialPort());
         ResponeDataIntface responeDataIntface = new ResponeDataIntface() {
